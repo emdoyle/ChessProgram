@@ -1,21 +1,22 @@
 
 public class Board {
 	
-	private Space[] spaces = new Space[64];
+	private Space[] spaces;
 	private boolean whiteTurn = true;
 	
-	public Board(){
+	public Board(int width, int height){
 		
-		initSpaces();
+		spaces = new Space[width*height];
+		initSpaces(width, height);
 		
 	}
 	
-	private void initSpaces(){
+	private void initSpaces(int width, int height){
 		
-		for(int i = 0; i < 8; i++){
-			for(int j = 0; j < 8; j++){
+		for(int i = 0; i < width; i++){
+			for(int j = 0; j < height; j++){
 			
-				spaces[i*j + i] = new Space(i, j, false);
+				spaces[j*width + i] = new Space(i, j);
 				
 			}
 		}
