@@ -1,20 +1,13 @@
-
+/** Holds the rank and file of a particular space on the board, as well as
+ *  if that space is currently occupied by a piece, and if so, the occupying
+ *  piece */
 public class Space {
 	
 	private int rank, file;
 	private boolean occupied;
 	private Piece occupyingPiece;
-	
-	public Space(){
-		//blank constructor should not be used,
-		//cannot judge occupied status of position
-		//here
-		rank = -1;
-		file = -1;
-		occupied = false;
-		
-	}
-	
+
+	// Space constructor which requires the rank and file of the board	
 	public Space(int file, int rank){
 		
 		this.rank = rank;
@@ -23,25 +16,25 @@ public class Space {
 		
 	}
 	
-	public int getRank(){
+	public int getRank(){ // rank getter
 		
 		return rank;
 		
 	}
 	
-	public int getFile(){
+	public int getFile(){ // file getter
 		
 		return file;
 		
 	}
 
-	public Piece getPiece(){
+	public Piece getPiece(){ // Piece getter
 
 		return occupyingPiece;
 
 	}
 
-	public void setPiece(Piece piece){
+	public void setPiece(Piece piece){ // Piece setter
 
 		occupyingPiece = piece;
 		piece.setSpace(this);
@@ -49,12 +42,14 @@ public class Space {
 
 	}
 	
+	// returns true if the space is occupied, false otherwise
 	public boolean isOccupied(){
 		
 		return occupied;
 		
 	}
 	
+	// changes the position of current space
 	public void setPosition(int rank, int file){
 		
 		this.rank = rank;
@@ -62,6 +57,7 @@ public class Space {
 		
 	}
 	
+	// sets the occupancy of the current space
 	public void setOccupied(boolean status){
 		
 		this.occupied = status;
