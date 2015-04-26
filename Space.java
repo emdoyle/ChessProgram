@@ -38,7 +38,7 @@ public class Space {
 
 		occupyingPiece = piece;
 		if(piece != null){piece.setSpace(this);}
-		occupied = (piece == null);
+		occupied = !(piece == null);
 
 	}
 	
