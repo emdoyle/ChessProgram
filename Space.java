@@ -15,11 +15,11 @@ public class Space {
 		
 	}
 	
-	public Space(int rank, int file, boolean status){
+	public Space(int rank, int file){
 		
 		this.rank = rank;
 		this.file = file;
-		occupied = status;
+		occupied = false;
 		
 	}
 	
