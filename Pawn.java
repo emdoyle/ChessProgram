@@ -40,7 +40,7 @@ public class Pawn extends Piece{
 			//case of diagonal capture
 			}else{
 				return ((destIndex - currIndex) == 7 || (destIndex - currIndex) == 9)
-									&& dest.isOccupied() && dest.getPiece().getSymbol == 'b';
+									&& dest.isOccupied() && (dest.getPiece().getSymbol() == 'b');
 			}
 		}else{
 			if((currIndex - destIndex) == 16 && !dest.isOccupied()){
@@ -49,7 +49,7 @@ public class Pawn extends Piece{
 				return true;
 			}else{
 				return ((currIndex - destIndex) == 7 || (currIndex - destIndex) == 9)
-									&& dest.isOccupied() && dest.getPiece().getSymbol == 'w';
+									&& dest.isOccupied() && (dest.getPiece().getSymbol() == 'w');
 			}
 
 		}
