@@ -34,6 +34,18 @@ public class Space {
 		return file;
 		
 	}
+
+	public Piece getPiece(){
+
+		return occupyingPiece;
+
+	}
+
+	public void setPiece(Piece piece){
+
+		occupyingPiece = piece;
+
+	}
 	
 	public boolean isOccupied(){
 		
