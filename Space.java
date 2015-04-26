@@ -45,6 +45,7 @@ public class Space {
 
 		occupyingPiece = piece;
 		piece.setSpace(this);
+		occupied = true;
 
 	}
 	

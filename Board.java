@@ -11,6 +11,7 @@ public class Board {
 		this.height = height;
 		spaces = new Space[width*height];
 		initSpaces(width, height);
+		addChessPieces();
 		
 	}
 	
@@ -29,8 +30,8 @@ public class Board {
 	public void addChessPieces(){
 		if(width == 8 && height == 8){
 			  for(int i = 0; i < 8; i++){
-				  spaces[i].setPiece(new Pawn('w'));
-				  spaces[56 + i].setPiece(new Pawn('b'));
+				  spaces[8 + i].setPiece(new Pawn('w'));
+				  spaces[48 + i].setPiece(new Pawn('b'));
 				}
 				addMinorPieces();
 		}
@@ -64,8 +65,8 @@ public class Board {
 
   public void displayBoard() {
     int spaceNum;
-		for (int i = 0; i < 8; i++) { // files starting at 0
-			for (int j = 7; j >= 0; j--) { // ranks starting at 7
+		for (int j = 7; j >= 0; j--) { // files starting at 0
+			for (int i = 0; i < 8; i++) { // ranks starting at 7
 				spaceNum = (8 * j) + i;
 				Space cur = spaces[spaceNum];
 				System.out.print("[");
