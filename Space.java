@@ -15,7 +15,7 @@ public class Space {
 		
 	}
 	
-	public Space(int rank, int file){
+	public Space(int file, int rank){
 		
 		this.rank = rank;
 		this.file = file;
