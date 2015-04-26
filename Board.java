@@ -56,6 +56,8 @@ public class Board {
 		spaces[58].setPiece(new Bishop());
 		spaces[61].setPiece(new Bishop());
 
+		spaces[3].setPiece(new Queen());
+		spaces[4].setPiece(new King());
 		spaces[59].setPiece(new Queen());
 		spaces[60].setPiece(new King());
 
