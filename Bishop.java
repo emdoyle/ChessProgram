@@ -1,8 +1,9 @@
 
 public class Bishop extends Piece{
 
-	public Bishop(){
+	public Bishop(char team){
 		symbol = 'B';
+		this.team = team;
 	}
 
 	public boolean canReach(Space dest){

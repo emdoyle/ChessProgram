@@ -1,8 +1,9 @@
 
 public class Knight extends Piece{
 
-	public Knight(){
+	public Knight(char team){
 		symbol = 'N';
+		this.team = team;
 	}	
 
 	public boolean canReach(Space dest){
