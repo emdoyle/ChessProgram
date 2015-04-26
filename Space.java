@@ -44,6 +44,7 @@ public class Space {
 	public void setPiece(Piece piece){
 
 		occupyingPiece = piece;
+		piece.setSpace(this);
 
 	}
 	
