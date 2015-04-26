@@ -114,10 +114,8 @@ public class Board {
 		System.out.println();
 	}
 
-	
-				
-				
-			
-
+	public Space[] getSpacesArray(){
+		return spaces;
+	}
 
 }
