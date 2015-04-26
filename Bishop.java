@@ -15,7 +15,7 @@ public class Bishop extends Piece{
 		destIndex = destRank*8 + destFile;
 
 		return (currIndex - destIndex) % 7 == 0 ||
-							(currIndex = destIndex) % 9 == 0;
+			(currIndex - destIndex) % 9 == 0;
 	}
 
 }
