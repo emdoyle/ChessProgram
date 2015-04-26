@@ -28,14 +28,12 @@ public class Board {
 
 	public void addChessPieces(){
 		if(width == 8 && height == 8){
-			for(int i = 0; i < width){
-				for(int j = 0; j < 2; j++){
-					if(j == 0){
-						spaces[j*width + i].setPiece(new Pawn());
-						spaces[(height-1)*width + i].setPiece(new Pawn());
-					}else{
-						addMinorPieces();
-					}
+			for(int j = 0; j < 2; j++){
+				if(j == 0){
+					spaces[j*width + i].setPiece(new Pawn());
+					spaces[(height-1)*width + i].setPiece(new Pawn());
+				}else{
+					addMinorPieces();
 				}
 			}
 		}
