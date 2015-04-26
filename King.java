@@ -7,15 +7,15 @@ public class King extends Piece {
     this.symbol = 'K';
   }
 
-  public boolean canReach( Space dest ) {
-    if (Math.abs( currentSpace.rank - dest.rank ) > 1) {
-      return false;
-    }
+	public boolean canReach( Space dest ) {
+		if (Math.abs( currentSpace.rank - dest.rank ) > 1) {
+			return false;
+		}
 
-    if (Math.abs( currentSpace.file - dest.file ) > 1) {
-      return false;
-    }
+		if (Math.abs( currentSpace.file - dest.file ) > 1) {
+			return false;
+		}
 
-    return true;
-  }
+		return true;
+	}
 }
