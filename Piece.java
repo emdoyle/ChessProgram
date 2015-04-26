@@ -6,4 +6,7 @@ public abstract class Piece {
 	
 	public abstract boolean canReach(Space dest);
 
+	public abstract getSpace();
+	public abstract setSpace(Space dest);
+
 }
