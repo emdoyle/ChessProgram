@@ -91,6 +91,7 @@ public class Board {
   public void displayBoard() {
     int spaceNum;
 		for (int j = 7; j >= 0; j--) { // files starting at 0
+			System.out.print((j+1) + ":");
 			for (int i = 0; i < 8; i++) { // ranks starting at 7
 				spaceNum = (8 * j) + i;
 				Space cur = spaces[spaceNum];
@@ -104,6 +105,13 @@ public class Board {
 			}
 			System.out.println();
 		}
+
+		System.out.print(" ");
+		for (char let = 'a'; let < 'i'; ++let) {
+			System.out.print("  " + let);
+		}
+
+		System.out.println();
 	}
 
 	
