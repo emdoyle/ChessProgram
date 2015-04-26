@@ -16,25 +16,21 @@ public class GameController {
 	}
 
 	private static void executeMove(Board board, Move m){
-		if(m.getVictim() != null){
-			processAttack(m);
-		}else{
 			Space begin = m.getBegin();
 			Space end = m.getEnd();
 			Piece p = m.getAttacker();
 
-			p.setSpace(end);
+			int begRank = begin.getRank();
+			int begFile = begin.getFile();
+			int begIndex = begRank*8 + begFile;
 
-			begRank = begin.getRank();
-			begFile = begin.getFile();
-			begIndex = begRank*8 + begFile;
+			int endRank = end.getRank();
+			int endFile = end.getFile();
+			int endIndex = endRank*8 + endFile;
 
-			endRank = end.getRank();
-			endFile = end.getFile();
-			endIndex = endRank*8 + endFile;
-
-			
-		}
+			Space[] sp = board.getSpacesArray();
+			sp[begIndex].setPiece(null);
+			sp[endIndex].setPiece(p);
 	}
 
 }
