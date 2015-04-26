@@ -2,14 +2,14 @@
 public class Rook extends Piece {
 
   // constructor
-  public Rook( Space space ) {
-    this.currentSpace = space;
+  public Rook( char color ) {
+    this.team = color;
     this.symbol = 'R';
   }
 
 	public boolean canReach( Space dest ) {
-		if (currentSpace.rank == dest.rank) return true;
-    if (currentSpace.file == dest.file) return true;
+		if (currentSpace.rank == dest.getRank()) return true;
+    if (currentSpace.file == dest.getFile()) return true;
     return false;
   }
 }

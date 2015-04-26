@@ -49,7 +49,7 @@ public class Board {
 		spaces[1].setPiece(new Knight());
 		spaces[6].setPiece(new Knight());
 		spaces[57].setPiece(new Knight());
-		spaces[62]setPiece(new Knight());
+		spaces[62].setPiece(new Knight());
 
 		spaces[2].setPiece(new Bishop());
 		spaces[5].setPiece(new Bishop());

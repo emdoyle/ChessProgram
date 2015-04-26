@@ -2,17 +2,17 @@
 public class King extends Piece {
 
   // constructor
-  public King( Space space ) {
-    this.currentSpace = space;
+  public King( char color ) {
+    this.team = color;
     this.symbol = 'K';
   }
 
 	public boolean canReach( Space dest ) {
-		if (Math.abs( currentSpace.rank - dest.rank ) > 1) {
+		if (Math.abs( currentSpace.getRank() - dest.getRank() ) > 1) {
 			return false;
 		}
 
-		if (Math.abs( currentSpace.file - dest.file ) > 1) {
+		if (Math.abs( currentSpace.getFile() - dest.getFile() ) > 1) {
 			return false;
 		}
 

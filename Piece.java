@@ -7,7 +7,7 @@ public abstract class Piece {
 	
 	public abstract boolean canReach(Space dest);
 
-	public abstract getSpace();
-	public abstract setSpace(Space dest);
+	public abstract Space getSpace();
+	public abstract void setSpace(Space dest);
 
 }
