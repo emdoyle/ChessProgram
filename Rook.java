@@ -8,8 +8,8 @@ public class Rook extends Piece {
   }
 
 	public boolean canReach( Space dest ) {
-		if (currentSpace.rank == dest.getRank()) return true;
-    if (currentSpace.file == dest.getFile()) return true;
+		if (currentSpace.getRank() == dest.getRank()) return true;
+    if (currentSpace.getFile() == dest.getFile()) return true;
     return false;
   }
 }

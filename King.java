@@ -8,11 +8,12 @@ public class King extends Piece {
   }
 
 	public boolean canReach( Space dest ) {
-		if (Math.abs( currentSpace.getRank() - dest.getRank() ) > 1) {
+    Space kingSpace = this.getSpace();
+		if (Math.abs( this.currentSpace.getRank() - dest.getRank() ) > 1) {
 			return false;
 		}
 
-		if (Math.abs( currentSpace.getFile() - dest.getFile() ) > 1) {
+		if (Math.abs( this.currentSpace.getFile() - dest.getFile() ) > 1) {
 			return false;
 		}
 

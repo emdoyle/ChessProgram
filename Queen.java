@@ -9,19 +9,19 @@ public class Queen extends Piece {
 
 	public boolean canReach( Space dest ) {
 
-		currentFile = currentSpace.getFile();
-		currentRank = currentSpace.getRank();
-		destFile = dest.getFile();
-		destRank = dest.getRank();
+		int currentFile = currentSpace.getFile();
+		int currentRank = currentSpace.getRank();
+		int destFile = dest.getFile();
+		int destRank = dest.getRank();
 
-		currIndex = currentRank*8 + currentFile;
-		destIndex = destRank*8 + destFile;
+		int currIndex = currentRank*8 + currentFile;
+		int destIndex = destRank*8 + destFile;
 
 		if ((currIndex - destIndex) % 7 == 0 || 
 			(currIndex = destIndex) % 9 == 0) return true;
 
-    if (currentSpace.rank == dest.getRank()) return true;
-    if (currentSpace.file == dest.getFile()) return true;
+    if (currentSpace.getRank() == dest.getRank()) return true;
+    if (currentSpace.getFile() == dest.getFile()) return true;
 
 		return false;
 	}
