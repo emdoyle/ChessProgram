@@ -9,6 +9,7 @@ public abstract class Piece {
 	Space currentSpace;
 	char symbol;
 	char team;
+	int value;
 	
 	public abstract boolean canReach(Space dest);
 
@@ -28,6 +29,10 @@ public abstract class Piece {
 	}
 	public void setSpace(Space dest){ // space setter
 		currentSpace = dest;
+	}
+
+	public int getValue(){
+		return value;
 	}
 
 }

@@ -5,6 +5,7 @@ public class King extends Piece {
   public King( char color ) {
 	this.team = color;
 	this.symbol = 'K';
+	this.value = 0;
   }
 
 	// determines whether a space is reachable

@@ -9,6 +9,7 @@ public class Pawn extends Piece{
 	//this is because it is set in Space.setPiece
 	public Pawn(char team){
 		symbol = 'P';
+		value = 1;
 		this.team = team;
 	}	
 
@@ -55,5 +56,4 @@ public class Pawn extends Piece{
 		}
 
 	}
-
 }
