@@ -4,7 +4,13 @@ public class Move {
 	//private double startTime, endTime;
 	private Piece attacker, victim;
 	private Space beginSpace, endSpace;
-	
+	//this ivar isn't used yet, not sure if necessary.
+	//first issue to resolve is whether moves should be
+	//constructed with a code param or if they should 'figure out'
+	//the code based on given info (but this task sounds better
+	//suited to MoveInterpreter)
+	private String code;	
+
 	public Move(Piece attacker, Piece victim, Space beginSpace,
 			Space endSpace){
 
@@ -45,6 +51,14 @@ public class Move {
 
 	public Space getEnd(){
 		return endSpace;
+	}
+
+	public String getCode(){
+		return code;
+	}
+
+	public void setCode(String newCode){
+		code = newCode;
 	}
 
 }
