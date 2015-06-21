@@ -22,7 +22,7 @@ public class GameController {
 			currentMove = ( currentMove == 'w' ) ? 'b' : 'w';
 		}*/
 	
-		/*	
+			
 		Move move1 = new Move(currentBoard.getSpacesArray()[12].getPiece(), null,
 				currentBoard.getSpacesArray()[12], currentBoard.getSpacesArray()[28]);
 		executeMove(currentBoard, move1);
@@ -38,7 +38,7 @@ public class GameController {
 		Move move3 = new Move(currentBoard.getSpacesArray()[28].getPiece(), currentBoard.getSpacesArray()[35].getPiece(), currentBoard.getSpacesArray()[28], currentBoard.getSpacesArray()[35]);
 		executeMove(currentBoard, move3);
 		currentBoard.displayBoard();
-*/
+
 		/*MoveInterpreter interp = new MoveInterpreter();
 		while(input.hasNext()){
 			Move currentMove = interp.interpret(input.next());
