@@ -1,5 +1,5 @@
 import java.util.Scanner;
-public class MoveInterpreter {
+public static class MoveInterpreter {
 
 	private Scanner input;
 
@@ -12,33 +12,60 @@ public class MoveInterpreter {
 		if ( line == "" || line.length() == 1 ) {
 			return false;
 		}
-
-		if ( line.length() > 10 ) {
+		//originally > 10?
+		if ( line.length() > 4 ) {
 			return false;
 		}
 
 		firstChar = line.charAt(0);
 		secondChar = line.charAt(1);
 
-		if ( firstChar >= 'a' && firstChar <= 'h' ) { // we know its a pawn move
-			if ( secondChar == 'x' ) { // we know its a capture
-				if ( line.length() != 4 ) { // must be size 4
-					return false;
-				}
-				thirdChar = line.charAt(2);
-				fourthChar = line.charAt(3);
-				if ( thirdChar < 'a' || thirdChar > 'h' ) {
-					return false;
-				}
-				if ( fourthChar < '1' || fourthChar > '8' ) {
-					return false;
-				}
+		if ( firstChar >= 'a' && firstChar <= 'h' ) { //pawn move
+			return isValidPawnMove(line);
+		}else if(firstChar == 'B'){
+			return isValidBishopMove(line);
+		}
+		return true;
+	}
+
+	private boolean isValidPawnMove(String line){
+		char secondChar = line.charAt(1);
+		if ( secondChar == 'x' ) { // we know its a capture
+			if ( line.length() != 4 ) { // must be size 4
+				return false;
 			}
-			if ( secondChar < '1' || secondChar > '8' ) {
+			char thirdChar = line.charAt(2);
+			char fourthChar = line.charAt(3);
+			if ( thirdChar < 'a' || thirdChar > 'h' ) {
+				return false;
+			}
+			if ( fourthChar < '1' || fourthChar > '8' ) {
 				return false;
 			}
 		}
-		return true;
+		if ( secondChar < '1' || secondChar > '8' ) {
+			return false;
+		}
+	}
+
+	private boolean isValidBishopMove(String line){
+		
+	}
+
+	private boolean isValidKnightMove(String line){
+
+	}
+
+	private boolean isValidQueenMove(String line){
+
+	}
+
+	private boolean isValidKingMove(String line){
+
+	}
+
+	private boolean isValidRookMove(String line){
+
 	}
 		
 	

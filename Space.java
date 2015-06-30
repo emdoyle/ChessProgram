@@ -6,6 +6,7 @@ public class Space {
 	private int rank, file;
 	private boolean occupied;
 	private Piece occupyingPiece;
+	private String code;
 
 	// Space constructor which requires the rank and file of the board	
 	public Space(int file, int rank){
@@ -14,6 +15,41 @@ public class Space {
 		this.file = file;
 		occupied = false;
 		
+	}
+
+	public String getCode(){
+		String result = "";
+		switch(getFile()){
+			case 0:
+			result += 'a';
+			break;
+			case 1:
+			result += 'b';
+			break;
+			case 2:
+			result += 'c';
+			break;
+			case 3:
+			result += 'd';
+			break;
+			case 4:
+			result += 'e';
+			break;
+			case 5:
+			result += 'f';
+			break;
+			case 6:
+			result += 'g';
+			break;
+			case 7:
+			result += 'h';
+			break;
+			default:
+			result += 'z';
+			break;
+		}
+		result += "" + getRank();
+		return result;
 	}
 	
 	public int getRank(){ // rank getter
