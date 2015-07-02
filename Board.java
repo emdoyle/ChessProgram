@@ -14,7 +14,16 @@
  */
 public class Board {
 	
-	private Space[] spaces;
+	private static final int A_FILE=0;
+	private static final int B_FILE=1;
+	private static final int C_FILE=2;
+	private static final int D_FILE=3;
+	private static final int E_FILE=4;
+	private static final int F_FILE=5;
+	private static final int G_FILE=6;
+	private static final int H_FILE=7;
+
+	private Space[][] spaces;
 	private boolean whiteTurn = true;
 	private int width, height;
 	
@@ -24,7 +33,7 @@ public class Board {
 		
 		this.width = width;
 		this.height = height;
-		spaces = new Space[width*height];
+		spaces = new Space[height][width];
 		initSpaces(width, height);
 		addChessPieces();
 		
@@ -36,7 +45,7 @@ public class Board {
 		for(int i = 0; i < width; i++){
 			for(int j = 0; j < height; j++){
 			
-				spaces[j*width + i] = new Space(i, j);
+				spaces[i][j] = new Space(i, j);
 				
 			}
 		}
@@ -47,9 +56,9 @@ public class Board {
   //addMinorPieces
 	public void addChessPieces(){
 		if(width == 8 && height == 8){
-			  for(int i = 0; i < 8; i++){
-				  spaces[8 + i].setPiece(new Pawn('w'));
-				  spaces[48 + i].setPiece(new Pawn('b'));
+			  for(int i = A_FILE; i <= H_FILE; i++){
+				  spaces[6][i].setPiece(new Pawn('w'));
+				  spaces[1][i].setPiece(new Pawn('b'));
 				}
 				addMinorPieces();
 		}
@@ -62,25 +71,25 @@ public class Board {
 		char black = 'b';
 		char white = 'w';
 
-		spaces[0].setPiece(new Rook(white));
-		spaces[7].setPiece(new Rook(white));
-		spaces[56].setPiece(new Rook(black));
-		spaces[63].setPiece(new Rook(black));
+		spaces[7][A_FILE].setPiece(new Rook(white));
+		spaces[7][H_FILE].setPiece(new Rook(white));
+		spaces[0][A_FILE].setPiece(new Rook(black));
+		spaces[0][H_FILE].setPiece(new Rook(black));
 
-		spaces[1].setPiece(new Knight(white));
-		spaces[6].setPiece(new Knight(white));
-		spaces[57].setPiece(new Knight(black));
-		spaces[62].setPiece(new Knight(black));
+		spaces[7][B_FILE].setPiece(new Knight(white));
+		spaces[7][G_FILE].setPiece(new Knight(white));
+		spaces[0][B_FILE].setPiece(new Knight(black));
+		spaces[0][G_FILE].setPiece(new Knight(black));
 
-		spaces[2].setPiece(new Bishop(white));
-		spaces[5].setPiece(new Bishop(white));
-		spaces[58].setPiece(new Bishop(black));
-		spaces[61].setPiece(new Bishop(black));
+		spaces[7][C_FILE].setPiece(new Bishop(white));
+		spaces[7][F_FILE].setPiece(new Bishop(white));
+		spaces[0][C_FILE].setPiece(new Bishop(black));
+		spaces[0][F_FILE].setPiece(new Bishop(black));
 
-		spaces[3].setPiece(new Queen(white));
-		spaces[4].setPiece(new King(white));
-		spaces[59].setPiece(new Queen(black));
-		spaces[60].setPiece(new King(black));
+		spaces[7][D_FILE].setPiece(new Queen(white));
+		spaces[7][E_FILE].setPiece(new King(white));
+		spaces[0][D_FILE].setPiece(new Queen(black));
+		spaces[0][E_FILE].setPiece(new King(black));
 
 	}
 
@@ -90,11 +99,11 @@ public class Board {
   //the correct location
   public void displayBoard() {
     int spaceNum;
-		for (int j = 7; j >= 0; j--) { // files starting at 0
+		for (int j = 7; j >= 0; j--) { // ranks from 8th to 1st
 			System.out.print((j+1) + ":");
-			for (int i = 0; i < 8; i++) { // ranks starting at 7
+			for (int i = 0; i < 8; i++) { // files from a to h
 				spaceNum = (8 * j) + i;
-				Space cur = spaces[spaceNum];
+				Space cur = spaces[j][i];
 				System.out.print("[");
 				if (cur.isOccupied()) {
 					System.out.print(cur.getPiece().symbol);
@@ -114,7 +123,7 @@ public class Board {
 		System.out.println();
 	}
 
-	public Space[] getSpacesArray(){
+	public Space[][] getSpacesArray(){
 		return spaces;
 	}
 

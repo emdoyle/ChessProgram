@@ -6,6 +6,7 @@ public class GameController {
 		Scanner input = new Scanner( System.in );	
 		System.out.println("Chess program has started, about to display board\n");
 		Board currentBoard = new Board(8, 8);
+		currentBoard.displayBoard();
 		String selectedMove;
 		MoveInterpreter interp = new MoveInterpreter();
 		char currentMove = 'w';
@@ -23,7 +24,7 @@ public class GameController {
 		}*/
 	
 			
-		Move move1 = new Move(currentBoard.getSpacesArray()[12].getPiece(), null,
+		/*Move move1 = new Move(currentBoard.getSpacesArray()[12].getPiece(), null,
 				currentBoard.getSpacesArray()[12], currentBoard.getSpacesArray()[28]);
 		executeMove(currentBoard, move1);
 		currentBoard.displayBoard();
@@ -47,7 +48,7 @@ public class GameController {
 	}
 
 	private static void executeMove(Board board, Move m){
-			Space begin = m.getBegin();
+			/*Space begin = m.getBegin();
 			Space end = m.getEnd();
 			Piece p = m.getAttacker();
 
@@ -59,9 +60,9 @@ public class GameController {
 			int endFile = end.getFile();
 			int endIndex = endRank*8 + endFile;
 
-			Space[] sp = board.getSpacesArray();
+			Space[][] sp = board.getSpacesArray();
 			sp[begIndex].setPiece(null);
-			sp[endIndex].setPiece(p);
+			sp[endIndex].setPiece(p);*/
 	}
 
 }
