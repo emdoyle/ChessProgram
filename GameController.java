@@ -9,6 +9,7 @@ public class GameController {
 		currentBoard.displayBoard();
 		String selectedMove;
 		MoveInterpreter interp = new MoveInterpreter();
+		MoveExecuter exec = new MoveExecuter(currentBoard);
 		char currentMove = 'w';
 		/*
 		while ( true ) {
