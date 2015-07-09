@@ -9,7 +9,7 @@ public class Space {
 	private String code;
 
 	// Space constructor which requires the rank and file of the board	
-	public Space(int file, int rank){
+	public Space(int rank, int file){
 		
 		this.rank = rank;
 		this.file = file;
@@ -48,7 +48,7 @@ public class Space {
 			result += 'z';
 			break;
 		}
-		result += "" + getRank();
+		result += "" + (getRank()+1);
 		return result;
 	}
 	

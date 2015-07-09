@@ -127,4 +127,13 @@ public class Board {
 		return spaces;
 	}
 
+	public void setSpacesArray(Space[][] spaceArr){
+		spaces = spaceArr;
+	}
+
+	//returns true if white is up, false if black is up
+	public boolean getWhiteTurn(){
+		return whiteTurn;
+	}
+
 }

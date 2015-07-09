@@ -13,7 +13,6 @@ public abstract class Piece {
 	
 	public abstract boolean canReach(Space dest);
 
-  // the following getters wer
 	public Space getSpace(){
 		return currentSpace;
 	}

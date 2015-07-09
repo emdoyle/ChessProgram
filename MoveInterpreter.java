@@ -3,7 +3,7 @@ public class MoveInterpreter {
 	public MoveInterpreter(){		
 	}
 
-	public static Move parseMove(String move){
+	public static Move parseMove(String line){
 		char firstChar;
 		if ( line == "" || line.length() == 1 ) {
 			return null;
@@ -29,9 +29,15 @@ public class MoveInterpreter {
 		}else{
 			return null;
 		}
-		return true;
 
 	}
+
+	private static Move PawnMove(String line){return null;}
+	private static Move KnightMove(String line){return null;}
+	private static Move BishopMove(String line){return null;}
+	private static Move RookMove(String line){return null;}
+	private static Move QueenMove(String line){return null;}
+	private static Move KingMove(String line){return null;}
 
 }
 
