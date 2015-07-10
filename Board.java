@@ -136,4 +136,8 @@ public class Board {
 		return whiteTurn;
 	}
 
+	public void setWhiteTurn(boolean flag){
+		whiteTurn = flag;
+	}
+
 }

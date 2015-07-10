@@ -9,7 +9,14 @@ public class Move {
 	//constructed with a code param or if they should 'figure out'
 	//the code based on given info (but this task sounds better
 	//suited to MoveInterpreter)
-	private String code;	
+	private String code;
+
+	public Move(){
+		attacker = null;
+		victim = null;
+		beginSpace = null;
+		endSpace = null;
+	}	
 
 	public Move(Piece attacker, Piece victim, Space beginSpace,
 			Space endSpace){

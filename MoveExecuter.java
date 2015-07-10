@@ -30,6 +30,7 @@ public class MoveExecuter{
 		}
 
 		currBoard.setSpacesArray(spaceArr);
+		currBoard.setWhiteTurn(!currBoard.getWhiteTurn());
 	}
 
 }
