@@ -15,6 +15,12 @@ public class MoveExecuter{
 	}
 
 	public void executeMove(Move m){
+		if(m == null || m.getAttacker() == null
+		|| m.getBegin() == null || m.getEnd()
+		== null){
+			System.out.println("Move failed");
+			return;
+		}
 		Piece attacker = m.getAttacker();
 		Piece victim = m.getVictim();
 		Space begin = m.getBegin();
@@ -25,7 +31,7 @@ public class MoveExecuter{
 		spaceArr[end.getRank()][end.getFile()].setPiece(attacker);
 		if(victim != null){
 			//use null space as flag for captured pieces
-			victim.setSpace(null);
+			//victim.setSpace(null);
 			spaceArr[begin.getRank()][begin.getFile()].setPiece(null);
 		}
 

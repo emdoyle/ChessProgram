@@ -4,25 +4,21 @@ public class Move {
 	//private double startTime, endTime;
 	private Piece attacker, victim;
 	private Space beginSpace, endSpace;
-	//this ivar isn't used yet, not sure if necessary.
-	//first issue to resolve is whether moves should be
-	//constructed with a code param or if they should 'figure out'
-	//the code based on given info (but this task sounds better
-	//suited to MoveInterpreter)
-	private String code;
+	private boolean promotion, check;
 
 	public Move(){
 		attacker = null;
 		victim = null;
 		beginSpace = null;
 		endSpace = null;
+		promotion = false;
+		check = false;
 	}	
 
-	public Move(Piece attacker, Piece victim, Space beginSpace,
-			Space endSpace){
+	public Move(Space beginSpace, Space endSpace){
 
-		this.attacker = attacker;
-		this.victim = victim;
+		this.attacker = beginSpace.getPiece();
+		this.victim = endSpace.getPiece();
 		this.beginSpace = beginSpace;
 		this.endSpace = endSpace;
 		
@@ -46,10 +42,16 @@ public class Move {
 
 	public void setBegin(Space beg){
 		beginSpace = beg;
+		//I believe in every scenario, we should set attacker to the
+		//piece on the beginning square
+		setAttacker(beginSpace.getPiece());
 	}
 
 	public void setEnd(Space end){
 		endSpace = end;
+		//THIS IS NOT CORRECT FOR EN PASSANT
+		//In en passant scenario, setEnd then setVictim
+		setVictim(endSpace.getPiece());
 	}
 
 	public Space getBegin(){
@@ -60,12 +62,20 @@ public class Move {
 		return endSpace;
 	}
 
-	public String getCode(){
-		return code;
+	public boolean isCheck(){
+		return check;
 	}
 
-	public void setCode(String newCode){
-		code = newCode;
+	public void setCheck(boolean flag){
+		check = flag;
+	}
+
+	public boolean isPromotion(){
+		return promotion;
+	}
+
+	public void setPromotion(boolean flag){
+		promotion = flag;
 	}
 
 }

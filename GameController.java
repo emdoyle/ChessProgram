@@ -9,40 +9,43 @@ public class GameController {
 		currentBoard.displayBoard();
 		Space[][] spaceArr = currentBoard.getSpacesArray();
 		String selectedMove;
+		Move currMove;
 		MoveInterpreter interp = new MoveInterpreter(currentBoard);
 		MoveExecuter exec = new MoveExecuter(currentBoard);
-		char currentMove = 'w';
+		System.out.println("Type a move code or type 'quit' to quit.");
+		selectedMove = input.nextLine();
+		while(!selectedMove.equals("quit")){
+			currMove = interp.parseMove(selectedMove);
+			exec.executeMove(currMove);
+			currentBoard.displayBoard();
+			selectedMove = input.nextLine();
+		}
+
 		/*System.out.println("Board[4][3] has rank: " +
 		spaceArr[4][3].getRank() + " and file: " +
 		spaceArr[4][3].getFile() + "\nand code: " +
 		spaceArr[4][3].getCode());*/
 
-		Piece att = spaceArr[1][0].getPiece();
-		System.out.println(att.getSpace().getCode() + " to " +
-		spaceArr[3][0].getCode());
-		Move testMove = new Move(att, null, spaceArr[1][0],
-		spaceArr[3][0]);
+		/*Move testMove = interp.parseMove("a4");
 		exec.executeMove(testMove);
 		currentBoard.displayBoard();
 
-		att = spaceArr[6][1].getPiece();
-		System.out.println(att.getSpace().getCode() + " to " +
-		spaceArr[4][1].getCode());
-		testMove = new Move(att, null, spaceArr[6][1],
-		spaceArr[4][1]);
+		testMove = interp.parseMove("b5");
 		exec.executeMove(testMove);
 		currentBoard.displayBoard();
 
-		/*att = spaceArr[4][4].getPiece();
-		Piece vic = spaceArr[3][3].getPiece();
-		System.out.println(att.getSpace().getCode() + " to " +
-		vic.getSpace().getCode());
-		testMove = new Move(att, vic, spaceArr[4][4],
-		spaceArr[3][3]);*/
+		testMove = interp.parseMove("c4");
+		exec.executeMove(testMove);
+		currentBoard.displayBoard();
+
+		testMove = interp.parseMove("d6");
+		exec.executeMove(testMove);
+		currentBoard.displayBoard();
+
 		System.out.println("axb5");
 		testMove = interp.parseMove("axb5");
 		exec.executeMove(testMove);
-		currentBoard.displayBoard();
+		currentBoard.displayBoard();*/
 
 	}
 
