@@ -54,10 +54,16 @@ public class MoveInterpreter {
 			int secondFile = fileToInt(line.charAt(2));
 			int secondRank = Character.getNumericValue(line.charAt(3))-1;
 
-			if(currBoard.getWhiteTurn()){
+			if(currBoard.getWhiteTurn() &&
+			secondRank >= 1 && spaceArr[secondRank-1][firstFile].getPiece()
+			!= null &&
+			spaceArr[secondRank-1][firstFile].getPiece().getTeam()=='w'){
 				result.setBegin(
 				spaceArr[secondRank-1][firstFile]);
-			}else{
+			}else if(!currBoard.getWhiteTurn() &&
+			secondRank <= 6 && spaceArr[secondRank+1][firstFile].getPiece()
+			!= null &&
+			spaceArr[secondRank+1][firstFile].getPiece().getTeam()=='b'){
 				result.setBegin(
 				spaceArr[secondRank+1][firstFile]);
 			}
@@ -69,13 +75,15 @@ public class MoveInterpreter {
 			spaceArr[destRank-1][firstFile].getPiece() != null
 			&& spaceArr[destRank-1][firstFile].
 			getPiece().getClass() == pwn.getClass() &&
-			currBoard.getWhiteTurn()){
+			spaceArr[destRank-1][firstFile].getPiece().getTeam()=='w'
+			&& currBoard.getWhiteTurn()){
 
 				result.setBegin(spaceArr[destRank-1][firstFile]);
 
 			}else if(spaceArr[destRank+1][firstFile].getPiece() != null
 			&& spaceArr[destRank+1][firstFile].
-			getPiece().getClass() == pwn.getClass()
+			getPiece().getClass() == pwn.getClass() &&
+			spaceArr[destRank+1][firstFile].getPiece().getTeam()=='b'
 			&& !currBoard.getWhiteTurn()){
 
 				result.setBegin(spaceArr[destRank+1][firstFile]);
@@ -83,13 +91,15 @@ public class MoveInterpreter {
 			}else if(destRank == 3 && spaceArr[destRank-2][firstFile].getPiece()
 			!= null && spaceArr[destRank-2][firstFile].
 			getPiece().getClass() == pwn.getClass() &&
-			currBoard.getWhiteTurn()){
+			spaceArr[destRank-2][firstFile].getPiece().getTeam()=='w'
+			&& currBoard.getWhiteTurn()){
 
 				result.setBegin(spaceArr[destRank-2][firstFile]);
 
 			}else if(destRank == 4 && spaceArr[destRank+2][firstFile].getPiece()
 			!= null && spaceArr[destRank+2][firstFile].
-			getPiece().getClass() == pwn.getClass()
+			getPiece().getClass() == pwn.getClass() &&
+			spaceArr[destRank+2][firstFile].getPiece().getTeam()=='b'
 			&& !currBoard.getWhiteTurn()){
 
 				result.setBegin(spaceArr[destRank+2][firstFile]);
@@ -112,25 +122,37 @@ public class MoveInterpreter {
 		Move result = new Move();
 		Knight kn = new Knight('w');
 
+		int destFile = -1;
+		int destRank = -1;
+
 		if(line.charAt(1) == 'x'){
 		//dealing with a capture
-			int destFile = fileToInt(line.charAt(2));
-			int destRank = Character.getNumericValue(line.charAt(3))-1;
+			destFile = fileToInt(line.charAt(2));
+			destRank = Character.getNumericValue(line.charAt(3))-1;
 
-			Space att = findKnight(destFile, destRank, currBoard);
-
-			if(att != null){
-				//System.out.println(spaceArr[destRank][destFile]==null);
-				result.setBegin(att);
-				result.setEnd(spaceArr[destRank][destFile]);
-			}else{
+			if(spaceArr[destRank][destFile].getPiece() == null){
 				return null;
 			}
 
-			return result;
 		}else{
-			return null;
+			destFile = fileToInt(line.charAt(1));
+			destRank = Character.getNumericValue(line.charAt(2))-1;
+
+			if(spaceArr[destRank][destFile].getPiece() != null){
+				return null;
+			}
 		}
+
+		Space att = findKnight(destFile, destRank, currBoard);
+
+		if(att != null){
+			result.setBegin(att);
+			result.setEnd(spaceArr[destRank][destFile]);
+		}else{
+			result = null;
+		}
+
+		return result;
 
 	}
 
@@ -138,13 +160,13 @@ public class MoveInterpreter {
 		int numPossibleKnights = 0;
 		Knight kn = new Knight('w');
 		Space result = null;
-		System.out.println("entered findKnight");
 
 		for(int i = -2; i <= 2; i++){
 			for(int j = -2; j <= 2; j++){
-			/*System.out.println("destFile:" + destFile + " destRank:" + destRank +
-			" j*-1:" + (j*-1) + " i*-1:" + (i*-1) + " 7-j:" + (7-j) + " 7-i:" + (7-i));*/
 				if(i != 0 && j != 0
+				&& !((i == 1 || i == -1)
+				&& (j == 1 || j == -1))
+				&& !(i%2 == 0 && j%2 == 0)
 				&& destFile >= j*-1 && destFile <= 7-j
 				&& destRank >= i*-1 && destRank <= 7-i){
 					if(spaceArr[destRank+i][destFile+j].getPiece() != null
@@ -152,7 +174,6 @@ public class MoveInterpreter {
 					== kn.getClass()){
 						numPossibleKnights++;
 						result = spaceArr[destRank+i][destFile+j];
-						System.out.println(destRank+i + " : " + (destFile+j));
 					}
 				}
 			}
@@ -163,52 +184,22 @@ public class MoveInterpreter {
 		}
 
 		return result;
-		
-		/*if(destFile >= 2 && destRank <= 6 && 
-		spaceArr[destRank+1][destFile-2].getPiece() != null){
-			numPossibleKnights++;
-			mostRecentKnight = spaceArr[destFile-2][destRank+1].getPiece();
-		}
-		if(destFile >= 2 && destRank >= 1 && 
-		spaceArr[destRank-1][destFile-2].getPiece() != null){
-			numPossibleKnights++;
-			mostRecentKnight = spaceArr[destRank-1][destFile-2].getPiece();
-		}
-		if(destFile >= 1 && destRank <= 5 && 
-		spaceArr[destRank+2][destFile-1].getPiece() != null){
-			numPossibleKnights++;
-			mostRecentKnight = spaceArr[destRank+2][destFile-1].getPiece();
-		}
-		if(destFile >= 1 && destRank >= 2 && 
-		spaceArr[destRank-2][destFile-1].getPiece() != null){
-			numPossibleKnights++;
-			mostRecentKnight = spaceArr[destRank-2][destFile-1].getPiece();
-		}
-		if(destFile <= 6 && destRank <= 5 && 
-		spaceArr[destRank+2][destFile+1].getPiece() != null){
-			numPossibleKnights++;
-			mostRecentKnight = spaceArr[destRank+2][destFile+1].getPiece();
-		}
-		if(destFile <= 5 && destRank <= 6 && 
-		spaceArr[destRank+1][destFile+2].getPiece() != null){
-			numPossibleKnights++;
-			mostRecentKnight = spaceArr[destRank+1][destFile+2].getPiece();
-		}
-		if(destFile <= 5 && destRank >= 1 && 
-		spaceArr[destRank-1][destFile+2].getPiece() != null){
-			numPossibleKnights++;
-			mostRecentKnight = spaceArr[destRank-1][destFile+2].getPiece();
-		}
-		if(destFile <= 6 && destRank >= 2 && 
-		spaceArr[destRank-2][destFile+1].getPiece() != null){
-			numPossibleKnights++;
-			mostRecentKnight = spaceArr[destRank-2][destFile+1].getPiece();
-		}*/
-
 	}
 
 
-	private Move BishopMove(String line){return null;}
+	private Move BishopMove(String line){
+
+		Move result = new Move();
+		Bishop bsh = new Bishop('w');
+
+		if(line.charAt(1) == 'x'){
+
+		}else{
+			
+		}
+
+	}
+
 	private Move RookMove(String line){return null;}
 	private Move QueenMove(String line){return null;}
 	private Move KingMove(String line){return null;}

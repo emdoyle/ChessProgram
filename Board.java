@@ -57,8 +57,8 @@ public class Board {
 	public void addChessPieces(){
 		if(width == 8 && height == 8){
 			  for(int i = A_FILE; i <= H_FILE; i++){
-				  spaces[6][i].setPiece(new Pawn('w'));
-				  spaces[1][i].setPiece(new Pawn('b'));
+				  spaces[6][i].setPiece(new Pawn('b'));
+				  spaces[1][i].setPiece(new Pawn('w'));
 				}
 				addMinorPieces();
 		}
@@ -71,25 +71,25 @@ public class Board {
 		char black = 'b';
 		char white = 'w';
 
-		spaces[7][A_FILE].setPiece(new Rook(white));
-		spaces[7][H_FILE].setPiece(new Rook(white));
-		spaces[0][A_FILE].setPiece(new Rook(black));
-		spaces[0][H_FILE].setPiece(new Rook(black));
+		spaces[7][A_FILE].setPiece(new Rook(black));
+		spaces[7][H_FILE].setPiece(new Rook(black));
+		spaces[0][A_FILE].setPiece(new Rook(white));
+		spaces[0][H_FILE].setPiece(new Rook(white));
 
-		spaces[7][B_FILE].setPiece(new Knight(white));
-		spaces[7][G_FILE].setPiece(new Knight(white));
-		spaces[0][B_FILE].setPiece(new Knight(black));
-		spaces[0][G_FILE].setPiece(new Knight(black));
+		spaces[7][B_FILE].setPiece(new Knight(black));
+		spaces[7][G_FILE].setPiece(new Knight(black));
+		spaces[0][B_FILE].setPiece(new Knight(white));
+		spaces[0][G_FILE].setPiece(new Knight(white));
 
-		spaces[7][C_FILE].setPiece(new Bishop(white));
-		spaces[7][F_FILE].setPiece(new Bishop(white));
-		spaces[0][C_FILE].setPiece(new Bishop(black));
-		spaces[0][F_FILE].setPiece(new Bishop(black));
+		spaces[7][C_FILE].setPiece(new Bishop(black));
+		spaces[7][F_FILE].setPiece(new Bishop(black));
+		spaces[0][C_FILE].setPiece(new Bishop(white));
+		spaces[0][F_FILE].setPiece(new Bishop(white));
 
-		spaces[7][D_FILE].setPiece(new Queen(white));
-		spaces[7][E_FILE].setPiece(new King(white));
-		spaces[0][D_FILE].setPiece(new Queen(black));
-		spaces[0][E_FILE].setPiece(new King(black));
+		spaces[7][D_FILE].setPiece(new Queen(black));
+		spaces[7][E_FILE].setPiece(new King(black));
+		spaces[0][D_FILE].setPiece(new Queen(white));
+		spaces[0][E_FILE].setPiece(new King(white));
 
 	}
 
@@ -106,9 +106,10 @@ public class Board {
 				Space cur = spaces[j][i];
 				System.out.print("[");
 				if (cur.isOccupied()) {
-					System.out.print(cur.getPiece().symbol);
+					System.out.print(cur.getPiece().getSymbol());
+					System.out.print(cur.getPiece().getTeam());
 				} else {
-					System.out.print(" ");
+					System.out.print("  ");
 				}
 			  System.out.print("]");
 			}
@@ -117,7 +118,7 @@ public class Board {
 
 		System.out.print(" ");
 		for (char let = 'a'; let < 'i'; ++let) {
-			System.out.print("  " + let);
+			System.out.print("   " + let);
 		}
 
 		System.out.println();
