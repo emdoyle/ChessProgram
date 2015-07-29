@@ -192,11 +192,71 @@ public class MoveInterpreter {
 		Move result = new Move();
 		Bishop bsh = new Bishop('w');
 
-		if(line.charAt(1) == 'x'){
+		int destFile = -1;
+		int destRank = -1;
 
-		}else{
+		if(line.charAt(1) == 'x'){
+			destFile = fileToInt(line.charAt(2));
+			destRank = Character.getNumericValue(line.charAt(3))-1;
+
+			if(spaceArr[destRank][destFile].getPiece() == null){
+				return null;
+			}
 			
+		}else{
+			destFile = fileToInt(line.charAt(1));
+			destRank = Character.getNumericValue(line.charAt(2))-1;
+
+			if(spaceArr[destRank][destFile].getPiece() != null){
+				return null;
+			}
+
 		}
+
+		Space att = findBishop(destFile, destRank, currBoard);
+
+		if(att != null){
+			result.setBegin(att);
+			result.setEnd(spaceArr[destRank][destFile]);
+		}else{
+			result = null;
+		}
+
+		return result;
+
+	}
+
+	private Space findBishop(int destFile, int destRank, Board currBoard){
+		int numPossBishops = 0;
+		Bishop bsh = new Bishop('w');
+		Space result = null;
+		int currRank = destRank;
+		int currFile = destFile;
+		for(int i = -1; i <= 1; i++){
+			for(int j = -1; j <= 1; j++){
+				currRank = destRank;
+				currFile = destFile;
+				if(i!=0 && j!=0){
+					while(currRank >= 1 && currRank <= 6
+					&& currFile >= 1 && currFile <= 6){
+						currRank+=i;
+						currFile+=j;
+						if(spaceArr[currRank][currFile].getPiece() != null
+						&& spaceArr[currRank][currFile].getPiece().getClass()
+						== bsh.getClass()){
+							numPossBishops++;
+							result = spaceArr[currRank][currFile];
+						}
+					}
+				}
+			}
+		}
+
+		if(numPossBishops >= 2){
+			return null;
+		}
+
+		return result;
 
 	}
 
