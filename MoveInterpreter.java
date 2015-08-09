@@ -1,5 +1,13 @@
 public class MoveInterpreter {
 
+	/*
+	* NEED TO FIX/DO
+	* -findPiece functions ignore collisions with pieces
+	* -pawn promotion
+	* -check for teams in findPiece and PieceMove
+	* -refactor redundant code (esp. Bishop/Knight/Rook)
+	*/
+
 	private Board currBoard;
 	private Space[][] spaceArr;
 
@@ -260,7 +268,61 @@ public class MoveInterpreter {
 
 	}
 
-	private Move RookMove(String line){return null;}
+	private Move RookMove(String line){
+
+		Move result = new Move();
+		Rook rk = new Rook('w');
+
+		int destRank = -1;
+		int destFile = -1;
+
+		if(line.charAt(1) == 'x'){
+			destFile = fileToInt(line.charAt(2));
+			destRank = Character.getNumericValue(line.charAt(3))-1;
+
+			if(spaceArr[destRank][destFile].getPiece() == null){
+				return null;
+			}
+			
+		}else{
+			destFile = fileToInt(line.charAt(1));
+			destRank = Character.getNumericValue(line.charAt(2))-1;
+
+			if(spaceArr[destRank][destFile].getPiece() != null){
+				return null;
+			}
+
+		}
+
+		Space att = findRook(destFile, destRank, currBoard);
+
+		if(att != null){
+			result.setBegin(att);
+			result.setEnd(spaceArr[destRank][destFile]);
+		}else{
+			result = null;
+		}
+
+		return result;
+
+
+		return null;
+
+	}
+
+	private Space findRook(int destFile, int destRank, Board currBoard){
+
+		int numPossRooks = 0;
+		Rook rk = new Rook('w');
+		Space result = null;
+		int currRank = destRank;
+		int currFile = destFile;
+
+		for(int i 
+		
+	}
+
+
 	private Move QueenMove(String line){return null;}
 	private Move KingMove(String line){return null;}
 
