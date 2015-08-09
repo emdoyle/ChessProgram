@@ -137,6 +137,13 @@ public class Board {
 		return whiteTurn;
 	}
 
+	public char getTurn(){
+		if(whiteTurn){
+			return 'w';
+		}
+		return 'b';
+	}
+
 	public void setWhiteTurn(boolean flag){
 		whiteTurn = flag;
 	}

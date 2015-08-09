@@ -2,9 +2,8 @@ public class MoveInterpreter {
 
 	/*
 	* NEED TO FIX/DO
-	* -findPiece functions ignore collisions with pieces
+	* -Bishop capturing own pieces
 	* -pawn promotion
-	* -check for teams in findPiece and PieceMove
 	* -refactor redundant code (esp. Bishop/Knight/Rook)
 	*/
 
@@ -59,26 +58,44 @@ public class MoveInterpreter {
 		Pawn pwn = new Pawn('w');
 		int firstFile = fileToInt(line.charAt(0));
 		if(line.charAt(1) == 'x'){
+		//this is a capture
 			int secondFile = fileToInt(line.charAt(2));
 			int secondRank = Character.getNumericValue(line.charAt(3))-1;
+			
+			//check if pawns are within one file
+			if(Math.abs(firstFile - secondFile) != 1){
+				return null;
+			}
 
 			if(currBoard.getWhiteTurn() &&
 			secondRank >= 1 && spaceArr[secondRank-1][firstFile].getPiece()
 			!= null &&
-			spaceArr[secondRank-1][firstFile].getPiece().getTeam()=='w'){
+			spaceArr[secondRank-1][firstFile].getPiece().getTeam()=='w' &&
+			spaceArr[secondRank][secondFile].getPiece().getTeam() == 'b'){
+				//white pawn capturing up
 				result.setBegin(
 				spaceArr[secondRank-1][firstFile]);
+			
 			}else if(!currBoard.getWhiteTurn() &&
 			secondRank <= 6 && spaceArr[secondRank+1][firstFile].getPiece()
 			!= null &&
-			spaceArr[secondRank+1][firstFile].getPiece().getTeam()=='b'){
+			spaceArr[secondRank+1][firstFile].getPiece().getTeam()=='b' &&
+			spaceArr[secondRank][secondFile].getPiece().getTeam() == 'w'){
+				//black pawn capturing down
 				result.setBegin(
 				spaceArr[secondRank+1][firstFile]);
 			}
 
 			result.setEnd(spaceArr[secondRank][secondFile]);
 		}else{
+			//not a capture
 			int destRank= Character.getNumericValue(line.charAt(1))-1;
+
+			//check if destination space is free
+			if(spaceArr[destRank][firstFile].getPiece() != null){
+				return null;
+			}			
+
 			if(destRank >=1 && 
 			spaceArr[destRank-1][firstFile].getPiece() != null
 			&& spaceArr[destRank-1][firstFile].
@@ -138,7 +155,9 @@ public class MoveInterpreter {
 			destFile = fileToInt(line.charAt(2));
 			destRank = Character.getNumericValue(line.charAt(3))-1;
 
-			if(spaceArr[destRank][destFile].getPiece() == null){
+			if(spaceArr[destRank][destFile].getPiece() == null
+				|| spaceArr[destRank][destFile].getPiece().getTeam()
+				== currBoard.getTurn()){
 				return null;
 			}
 
@@ -179,7 +198,9 @@ public class MoveInterpreter {
 				&& destRank >= i*-1 && destRank <= 7-i){
 					if(spaceArr[destRank+i][destFile+j].getPiece() != null
 					&& spaceArr[destRank+i][destFile+j].getPiece().getClass()
-					== kn.getClass()){
+					== kn.getClass() &&
+					spaceArr[destRank+i][destFile+j].getPiece().getTeam()
+					== currBoard.getTurn()){
 						numPossibleKnights++;
 						result = spaceArr[destRank+i][destFile+j];
 					}
@@ -207,7 +228,10 @@ public class MoveInterpreter {
 			destFile = fileToInt(line.charAt(2));
 			destRank = Character.getNumericValue(line.charAt(3))-1;
 
-			if(spaceArr[destRank][destFile].getPiece() == null){
+			if(spaceArr[destRank][destFile].getPiece() == null
+				|| spaceArr[destRank][destFile].getPiece().getTeam()
+				== currBoard.getTurn()){
+				//no piece to capture or own piece on space
 				return null;
 			}
 			
@@ -245,13 +269,23 @@ public class MoveInterpreter {
 				currRank = destRank;
 				currFile = destFile;
 				if(i!=0 && j!=0){
-					while(currRank >= 1 && currRank <= 6
-					&& currFile >= 1 && currFile <= 6){
+					while(currRank >= 0 && currRank <= 7
+					&& currFile >= 0 && currFile <= 7){
 						currRank+=i;
 						currFile+=j;
+						if(currRank == -1 || currRank == 8 || currFile == -1
+							|| currFile == 8){break;}
 						if(spaceArr[currRank][currFile].getPiece() != null
 						&& spaceArr[currRank][currFile].getPiece().getClass()
-						== bsh.getClass()){
+						!= bsh.getClass()){
+							//this case is a collision on the diagonal
+							break;
+						}
+						if(spaceArr[currRank][currFile].getPiece() != null
+						&& spaceArr[currRank][currFile].getPiece().getClass()
+						== bsh.getClass() &&
+						spaceArr[currRank][currFile].getPiece().getTeam()
+						== currBoard.getTurn()){
 							numPossBishops++;
 							result = spaceArr[currRank][currFile];
 						}
@@ -304,10 +338,6 @@ public class MoveInterpreter {
 		}
 
 		return result;
-
-
-		return null;
-
 	}
 
 	private Space findRook(int destFile, int destRank, Board currBoard){
@@ -318,8 +348,8 @@ public class MoveInterpreter {
 		int currRank = destRank;
 		int currFile = destFile;
 
-		for(int i 
-		
+		//for(int i 
+		return null;
 	}
 
 

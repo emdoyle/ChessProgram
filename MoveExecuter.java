@@ -29,11 +29,11 @@ public class MoveExecuter{
 		begin.setOccupied(false);
 		attacker.setSpace(end);
 		spaceArr[end.getRank()][end.getFile()].setPiece(attacker);
-		if(victim != null){
+		//if(victim != null){
 			//use null space as flag for captured pieces
 			//victim.setSpace(null);
 			spaceArr[begin.getRank()][begin.getFile()].setPiece(null);
-		}
+		//}
 
 		currBoard.setSpacesArray(spaceArr);
 		currBoard.setWhiteTurn(!currBoard.getWhiteTurn());
