@@ -422,8 +422,196 @@ public class MoveInterpreter {
 	}
 
 
-	private Move QueenMove(String line){return null;}
-	private Move KingMove(String line){return null;}
+	private Move QueenMove(String line){
+
+		Move result = new Move();
+
+		int destFile = -1;
+		int destRank = -1;
+
+		if(line.charAt(1) == 'x'){
+			//capture
+			destFile = fileToInt(line.charAt(2));
+			destRank = Character.getNumericValue(line.charAt(3))-1;
+
+			if(spaceArr[destRank][destFile].getPiece() == null
+				|| spaceArr[destRank][destFile].getPiece().getTeam()
+				== currBoard.getTurn()){
+				//no piece to capture or own piece on space
+				return null;
+			}
+			
+		}else{
+
+			destFile = fileToInt(line.charAt(1));
+			destRank = Character.getNumericValue(line.charAt(2))-1;
+
+			if(spaceArr[destRank][destFile].getPiece() != null){
+				//no capture but destination is occupied
+				return null;
+			}
+
+		}
+
+		Space att = findQueen(destFile, destRank, currBoard);
+
+		//null check avoids NPE
+		if(att != null){
+			result.setBegin(att);
+			result.setEnd(spaceArr[destRank][destFile]);
+		}else{
+			result = null;
+		}
+
+		return result;
+	}
+
+	private Space findQueen(int destFile, int destRank, Board currBoard){
+		//This method does not accommodate multiple possible queens
+		int numPossQueens = 0;
+		Queen qn = new Queen('w');
+		Space result = null;
+		int currRank = destRank;
+		int currFile = destFile;
+
+		for(int i = -1; i <= 1; i++){
+			for(int j = -1; j <= 1; j++){
+			//i and j are allowed to be 1, 0, and -1
+			//this is to simulate each of the four diagonals
+			//and the four straight lines
+			//ex: i,j = 1 would follow the up-right diagonal
+			//and i=1, j=-1 would follow the up-left diagonal
+				currRank = destRank;
+				currFile = destFile;
+
+				while(!(i == 0 && j == 0) &&
+				currRank >= 0 && currRank <= 7
+				&& currFile >= 0 && currFile <= 7){
+
+					currRank+=i;
+					currFile+=j;
+					if(currRank == -1 || currRank == 8 || currFile == -1
+						|| currFile == 8){break;}
+
+					if(spaceArr[currRank][currFile].getPiece() != null
+					&& spaceArr[currRank][currFile].getPiece().getClass()
+					!= qn.getClass()){
+						//this case is a collision on the diagonal
+						break;
+					}
+
+					if(spaceArr[currRank][currFile].getPiece() != null
+					&& spaceArr[currRank][currFile].getPiece().getClass()
+					== qn.getClass() &&
+					spaceArr[currRank][currFile].getPiece().getTeam()
+					== currBoard.getTurn()){
+					//conditions: it is a piece, it is a queen, its turn is
+					//occurring now
+						numPossQueens++;
+						result = spaceArr[currRank][currFile];
+					}
+				}
+			}
+		}
+
+		if(numPossQueens >= 2){
+			return null;
+		}
+
+		return result;
+
+	}
+	private Move KingMove(String line){
+
+		Move result = new Move();
+
+		int destFile = -1;
+		int destRank = -1;
+
+		if(line.charAt(1) == 'x'){
+			//capture
+			destFile = fileToInt(line.charAt(2));
+			destRank = Character.getNumericValue(line.charAt(3))-1;
+
+			if(spaceArr[destRank][destFile].getPiece() == null
+				|| spaceArr[destRank][destFile].getPiece().getTeam()
+				== currBoard.getTurn()){
+				//no piece to capture or own piece on space
+				return null;
+			}
+			
+		}else{
+
+			destFile = fileToInt(line.charAt(1));
+			destRank = Character.getNumericValue(line.charAt(2))-1;
+
+			if(spaceArr[destRank][destFile].getPiece() != null){
+				//no capture but destination is occupied
+				return null;
+			}
+
+		}
+
+		Space att = findKing(destFile, destRank, currBoard);
+
+		//null check avoids NPE
+		if(att != null){
+			result.setBegin(att);
+			result.setEnd(spaceArr[destRank][destFile]);
+		}else{
+			result = null;
+		}
+
+		return result;
+	}
+
+	private Space findKing(int destFile, int destRank, Board currBoard){
+		//This method does not accommodate multiple possible queens
+		int numPossKings = 0;
+		King kng = new King('w');
+		Space result = null;
+		int currRank = destRank;
+		int currFile = destFile;
+
+		for(int i = -1; i <= 1; i++){
+			for(int j = -1; j <= 1; j++){
+			//i and j are allowed to be 1, 0, and -1
+			//this is to simulate each of the four diagonals
+			//and the four straight lines
+			//ex: i,j = 1 would follow the up-right diagonal
+			//and i=1, j=-1 would follow the up-left diagonal
+				currRank = destRank;
+				currFile = destFile;
+
+				if(!(i == 0 && j == 0) &&
+				currRank >= 0 && currRank <= 7
+				&& currFile >= 0 && currFile <= 7){
+
+					currRank+=i;
+					currFile+=j;
+					if(currRank == -1 || currRank == 8 || currFile == -1
+						|| currFile == 8){break;}
+
+					if(spaceArr[currRank][currFile].getPiece() != null
+					&& spaceArr[currRank][currFile].getPiece().getClass()
+					== kng.getClass() &&
+					spaceArr[currRank][currFile].getPiece().getTeam()
+					== currBoard.getTurn()){
+					//conditions: it is a piece, it is a queen, its turn is
+					//occurring now
+						numPossKings++;
+						result = spaceArr[currRank][currFile];
+					}
+				}
+			}
+		}
+
+		if(numPossKings >= 2){
+			return null;
+		}
+
+		return result;
+	}
 
 }
 
