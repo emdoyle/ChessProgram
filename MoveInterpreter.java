@@ -5,6 +5,7 @@ public class MoveInterpreter {
 	* -LONG-TERM: Detecting check(mate) (this file?)
 	* -LONG-TERM: Support castling q+k-side
 	* -pawn promotion
+	* -deal with multiple poss attacker moves (ex: Nac3)
 	* -refactor redundant code (esp. Bishop/Knight/Rook)
 	*/
 
@@ -149,11 +150,14 @@ public class MoveInterpreter {
 
 		int destFile = -1;
 		int destRank = -1;
+		int beginFile = -1;
+		int beginRank = -1;
 
-		if(line.charAt(1) == 'x'){
+		if(line.indexOf('x') != -1){
 		//dealing with a capture
-			destFile = fileToInt(line.charAt(2));
-			destRank = Character.getNumericValue(line.charAt(3))-1;
+			String destLine = line.substring(line.indexOf('x')+1);
+			destFile = fileToInt(destLine.charAt(0));
+			destRank = Character.getNumericValue(destLine.charAt(1))-1;
 
 			if(spaceArr[destRank][destFile].getPiece() == null
 				|| spaceArr[destRank][destFile].getPiece().getTeam()
@@ -162,17 +166,51 @@ public class MoveInterpreter {
 				return null;
 			}
 
+			String beginLine = line.substring(1, line.indexOf('x'));
+			if(beginLine.length() == 2){
+				beginFile = fileToInt(beginLine.charAt(0));
+				beginRank = Character.getNumericValue(beginLine.charAt(1))-1;
+			}else if(beginLine.length() == 1){
+				beginFile = fileToInt(beginLine.charAt(0));
+			}
+
 		}else{
-			destFile = fileToInt(line.charAt(1));
-			destRank = Character.getNumericValue(line.charAt(2))-1;
+			String shortLine = line.substring(1); //cuts off piece symbol (ex: 'N')
+
+			if(shortLine.length() == 2){
+				//line length of two indicates only one possible
+				//attacker. ex: a3 (two characters)
+				destFile = fileToInt(shortLine.charAt(0));
+				destRank = Character.getNumericValue(shortLine.charAt(1))-1;
+			}else if(shortLine.length() == 3){
+				beginFile = fileToInt(shortLine.charAt(0));
+
+				destFile = fileToInt(shortLine.charAt(1));
+				destRank = Character.getNumericValue(shortLine.charAt(2)-1);
+			}else if(shortLine.length() == 4){
+				beginFile = fileToInt(shortLine.charAt(0));
+				beginRank = Character.getNumericValue(shortLine.charAt(1)-1);
+
+				destFile = fileToInt(shortLine.charAt(2));
+				destRank = Character.getNumericValue(shortLine.charAt(3))-1;
+			}
+			
 
 			if(spaceArr[destRank][destFile].getPiece() != null){
 				//if there is a piece at dest but not a capture
 				return null;
 			}
 		}
-
-		Space att = findKnight(destFile, destRank, currBoard);
+		Space att = null;
+		if(beginFile == -1 && beginRank == -1){
+			att = findKnight(beginFile, destFile, destRank);
+		}else if(beginRank == -1){
+			//initialized beginFile but not rank
+			att = findKnight(beginFile, destFile, destRank);
+		}else{
+			//initialized both
+			att = spaceArr[beginRank][beginFile];
+		}
 
 		//check for null to avoid NPE
 		if(att != null){
@@ -186,7 +224,7 @@ public class MoveInterpreter {
 
 	}
 
-	private Space findKnight(int destFile, int destRank, Board currBoard){
+	private Space findKnight(int beginFile, int destFile, int destRank){
 		/*
 		* NOTE: Currently does not accommodate multiple
 		* possible knights (must also be specified in code)
@@ -195,12 +233,12 @@ public class MoveInterpreter {
 		int numPossibleKnights = 0;
 		Knight kn = new Knight('w');
 		Space result = null;
-
+		if(beginFile == -1){
 		for(int i = -2; i <= 2; i++){
 			for(int j = -2; j <= 2; j++){
 				if(i != 0 && j != 0
-				&& !((i == 1 || i == -1)
-				&& (j == 1 || j == -1))
+				&& !((Math.abs(i) == 1)
+				&& (Math.abs(j) == 1))
 				&& !(i%2 == 0 && j%2 == 0)
 				&& destFile >= j*-1 && destFile <= 7-j
 				&& destRank >= i*-1 && destRank <= 7-i){
@@ -218,6 +256,28 @@ public class MoveInterpreter {
 					}
 				}
 			}
+		}
+		}else{
+			int rankOffset = 0;
+			if(Math.abs(beginFile - destFile) == 1){
+				rankOffset = 2;
+			}else if(Math.abs(beginFile - destFile) == 2){
+				rankOffset = 1;
+			}
+			for(int i = -1; i <= 1; i+=2){
+				if(destRank + rankOffset*i <= 7 && destRank + rankOffset*i >= 0
+					&& spaceArr[destRank+rankOffset*i][beginFile].getPiece() != null
+					&& spaceArr[destRank+rankOffset*i][beginFile].getPiece().getClass()
+					== kn.getClass() &&
+					spaceArr[destRank+rankOffset*i][beginFile].getPiece().getTeam()
+					== currBoard.getTurn()){
+					//conditions: there is a piece, it is a knight, it is on the team
+					//having a turn now
+					numPossibleKnights++;
+					result = spaceArr[destRank+rankOffset*i][beginFile];
+				}
+			}
+
 		}
 
 		if(numPossibleKnights >= 2){
