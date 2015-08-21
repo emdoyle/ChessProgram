@@ -5,8 +5,6 @@ public class MoveInterpreter {
 	* -LONG-TERM: Detecting check(mate) (this file?)
 	* -LONG-TERM: Support castling q+k-side
 	* -pawn promotion
-	* -deal with multiple poss attacker moves (ex: Nac3)
-	* -refactor redundant code (esp. Bishop/Knight/Rook)
 	*/
 
 	private Board currBoard;
@@ -31,15 +29,15 @@ public class MoveInterpreter {
 		if ( firstChar >= 'a' && firstChar <= 'h' ) { //pawn move
 			return PawnMove(line);
 		}else if(firstChar == 'B'){
-			return BishopMove(line);
+			return minorPieceMove('B', line);
 		}else if(firstChar == 'N'){
-			return KnightMove(line);
+			return minorPieceMove('N', line);
 		}else if(firstChar == 'R'){
-			return RookMove(line);
+			return minorPieceMove('R', line);
 		}else if(firstChar == 'Q'){
-			return QueenMove(line);
+			return minorPieceMove('Q', line);
 		}else if(firstChar == 'K'){
-			return KingMove(line);
+			return minorPieceMove('K', line);
 		}else{
 			return null;
 		}
@@ -143,8 +141,7 @@ public class MoveInterpreter {
 
 	}
 
-
-	private Move KnightMove(String line){
+	private Move minorPieceMove(char piece, String line){
 
 		Move result = new Move();
 
@@ -167,6 +164,8 @@ public class MoveInterpreter {
 			}
 
 			String beginLine = line.substring(1, line.indexOf('x'));
+			//beginLine is everything before the 'x'
+
 			if(beginLine.length() == 2){
 				beginFile = fileToInt(beginLine.charAt(0));
 				beginRank = Character.getNumericValue(beginLine.charAt(1))-1;
@@ -175,7 +174,8 @@ public class MoveInterpreter {
 			}
 
 		}else{
-			String shortLine = line.substring(1); //cuts off piece symbol (ex: 'N')
+			String shortLine = line.substring(1);
+			//cuts off piece symbol (ex: 'N')
 
 			if(shortLine.length() == 2){
 				//line length of two indicates only one possible
@@ -202,11 +202,27 @@ public class MoveInterpreter {
 			}
 		}
 		Space att = null;
-		if(beginFile == -1 && beginRank == -1){
-			att = findKnight(beginFile, destFile, destRank);
-		}else if(beginRank == -1){
-			//initialized beginFile but not rank
-			att = findKnight(beginFile, destFile, destRank);
+		if(beginFile == -1 || beginRank == -1){
+			switch(piece){
+				case 'N':
+					att = findKnight(beginFile, destFile, destRank);
+					break;
+				case 'B':
+					att = findBishop(beginFile, destFile, destRank);
+					break;
+				case 'R':
+					att = findRook(beginFile, destFile, destRank);
+					break;
+				case 'Q':
+					att = findQueen(beginFile, destFile, destRank);
+					break;
+				case 'K':
+					att = findKing(beginFile, destFile, destRank);
+					break;
+				default:
+					att = null;
+					break;
+			}
 		}else{
 			//initialized both
 			att = spaceArr[beginRank][beginFile];
@@ -225,11 +241,6 @@ public class MoveInterpreter {
 	}
 
 	private Space findKnight(int beginFile, int destFile, int destRank){
-		/*
-		* NOTE: Currently does not accommodate multiple
-		* possible knights (must also be specified in code)
-		* ex: Nac3 means Knight from a-file to c3
-		*/
 		int numPossibleKnights = 0;
 		Knight kn = new Knight('w');
 		Space result = null;
@@ -288,52 +299,7 @@ public class MoveInterpreter {
 	}
 
 
-	private Move BishopMove(String line){
-
-		Move result = new Move();
-
-		int destFile = -1;
-		int destRank = -1;
-
-		if(line.charAt(1) == 'x'){
-			//capture
-			destFile = fileToInt(line.charAt(2));
-			destRank = Character.getNumericValue(line.charAt(3))-1;
-
-			if(spaceArr[destRank][destFile].getPiece() == null
-				|| spaceArr[destRank][destFile].getPiece().getTeam()
-				== currBoard.getTurn()){
-				//no piece to capture or own piece on space
-				return null;
-			}
-			
-		}else{
-
-			destFile = fileToInt(line.charAt(1));
-			destRank = Character.getNumericValue(line.charAt(2))-1;
-
-			if(spaceArr[destRank][destFile].getPiece() != null){
-				//no capture but destination is occupied
-				return null;
-			}
-
-		}
-
-		Space att = findBishop(destFile, destRank, currBoard);
-
-		//null check avoids NPE
-		if(att != null){
-			result.setBegin(att);
-			result.setEnd(spaceArr[destRank][destFile]);
-		}else{
-			result = null;
-		}
-
-		return result;
-
-	}
-
-	private Space findBishop(int destFile, int destRank, Board currBoard){
+	private Space findBishop(int beginFile, int destFile, int destRank){
 
 		//This method does not accommodate multiple possible bishops
 		int numPossBishops = 0;
@@ -341,7 +307,30 @@ public class MoveInterpreter {
 		Space result = null;
 		int currRank = destRank;
 		int currFile = destFile;
+		if(beginFile != -1){/*
+			for(int i = 1; i <= Math.abs(destFile - beginFile); i++){
+				currRank = destRank - i;
+				currFile = destFile - i;
 
+				if(spaceArr[currRank][currFile].getPiece() != null
+					&& spaceArr[currRank][currFile].getPiece().getClass()
+					!= bsh.getClass()){
+						//this case is a collision on the diagonal
+						break;
+				}
+
+				if(spaceArr[currRank][currFile].getPiece() != null
+					&& spaceArr[currRank][currFile].getPiece().getClass()
+					== bsh.getClass() &&
+					spaceArr[currRank][currFile].getPiece().getTeam()
+					== currBoard.getTurn()){
+						//conditions: it is a piece, it is a bishop, its turn is
+						//occurring now
+						numPossBishops++;
+						result = spaceArr[currRank][currFile];
+				}
+			}*/
+		}else{
 		for(int i = -1; i <= 1; i++){
 			for(int j = -1; j <= 1; j++){
 			//i and j are only allowed to be 1 or -1
@@ -381,6 +370,7 @@ public class MoveInterpreter {
 				}
 			}
 		}
+		}
 
 		if(numPossBishops >= 2){
 			return null;
@@ -390,58 +380,16 @@ public class MoveInterpreter {
 
 	}
 
-	private Move RookMove(String line){
-
-		Move result = new Move();
-
-		int destFile = -1;
-		int destRank = -1;
-
-		if(line.charAt(1) == 'x'){
-			//capture
-			destFile = fileToInt(line.charAt(2));
-			destRank = Character.getNumericValue(line.charAt(3))-1;
-
-			if(spaceArr[destRank][destFile].getPiece() == null
-				|| spaceArr[destRank][destFile].getPiece().getTeam()
-				== currBoard.getTurn()){
-				//no piece to capture or own piece on space
-				return null;
-			}
-			
-		}else{
-
-			destFile = fileToInt(line.charAt(1));
-			destRank = Character.getNumericValue(line.charAt(2))-1;
-
-			if(spaceArr[destRank][destFile].getPiece() != null){
-				//no capture but destination is occupied
-				return null;
-			}
-
-		}
-
-		Space att = findRook(destFile, destRank, currBoard);
-
-		//null check avoids NPE
-		if(att != null){
-			result.setBegin(att);
-			result.setEnd(spaceArr[destRank][destFile]);
-		}else{
-			result = null;
-		}
-
-		return result;
-	}
-
-	private Space findRook(int destFile, int destRank, Board currBoard){
+	private Space findRook(int beginFile, int destFile, int destRank){
 
 		int numPossRooks = 0;
 		Rook rk = new Rook('w');
 		Space result = null;
 		int currRank = destRank;
 		int currFile = destFile;
-
+		if(beginFile != -1){
+			
+		}else{
 		for(int i = -1; i <=1; i++){
 			for(int j = -1; j <=1; j++){
 				//reset currRank and currFile
@@ -478,55 +426,13 @@ public class MoveInterpreter {
 				}
 			}
 		}
+		}
 		return result;
 	}
 
 
-	private Move QueenMove(String line){
-
-		Move result = new Move();
-
-		int destFile = -1;
-		int destRank = -1;
-
-		if(line.charAt(1) == 'x'){
-			//capture
-			destFile = fileToInt(line.charAt(2));
-			destRank = Character.getNumericValue(line.charAt(3))-1;
-
-			if(spaceArr[destRank][destFile].getPiece() == null
-				|| spaceArr[destRank][destFile].getPiece().getTeam()
-				== currBoard.getTurn()){
-				//no piece to capture or own piece on space
-				return null;
-			}
-			
-		}else{
-
-			destFile = fileToInt(line.charAt(1));
-			destRank = Character.getNumericValue(line.charAt(2))-1;
-
-			if(spaceArr[destRank][destFile].getPiece() != null){
-				//no capture but destination is occupied
-				return null;
-			}
-
-		}
-
-		Space att = findQueen(destFile, destRank, currBoard);
-
-		//null check avoids NPE
-		if(att != null){
-			result.setBegin(att);
-			result.setEnd(spaceArr[destRank][destFile]);
-		}else{
-			result = null;
-		}
-
-		return result;
-	}
-
-	private Space findQueen(int destFile, int destRank, Board currBoard){
+	
+	private Space findQueen(int beginFile, int destFile, int destRank){
 		//This method does not accommodate multiple possible queens
 		int numPossQueens = 0;
 		Queen qn = new Queen('w');
@@ -581,51 +487,8 @@ public class MoveInterpreter {
 		return result;
 
 	}
-	private Move KingMove(String line){
-
-		Move result = new Move();
-
-		int destFile = -1;
-		int destRank = -1;
-
-		if(line.charAt(1) == 'x'){
-			//capture
-			destFile = fileToInt(line.charAt(2));
-			destRank = Character.getNumericValue(line.charAt(3))-1;
-
-			if(spaceArr[destRank][destFile].getPiece() == null
-				|| spaceArr[destRank][destFile].getPiece().getTeam()
-				== currBoard.getTurn()){
-				//no piece to capture or own piece on space
-				return null;
-			}
-			
-		}else{
-
-			destFile = fileToInt(line.charAt(1));
-			destRank = Character.getNumericValue(line.charAt(2))-1;
-
-			if(spaceArr[destRank][destFile].getPiece() != null){
-				//no capture but destination is occupied
-				return null;
-			}
-
-		}
-
-		Space att = findKing(destFile, destRank, currBoard);
-
-		//null check avoids NPE
-		if(att != null){
-			result.setBegin(att);
-			result.setEnd(spaceArr[destRank][destFile]);
-		}else{
-			result = null;
-		}
-
-		return result;
-	}
-
-	private Space findKing(int destFile, int destRank, Board currBoard){
+	
+	private Space findKing(int beginFile, int destFile, int destRank){
 		//This method does not accommodate multiple possible queens
 		int numPossKings = 0;
 		King kng = new King('w');
