@@ -225,7 +225,15 @@ public class MoveInterpreter {
 			}
 		}else{
 			//initialized both
-			att = spaceArr[beginRank][beginFile];
+			//need to make sure begin is proper piece, no collision
+			if(piece == 'N' && 
+			piece == spaceArr[beginRank][beginFile].getPiece().getSymbol()){
+				att = spaceArr[beginRank][beginFile];
+			}else if(minorCanReach(beginFile, beginRank, destFile, destRank, piece)){
+				att = spaceArr[beginRank][beginFile];
+			}else{
+				att = null;
+			}
 		}
 
 		//check for null to avoid NPE
@@ -237,6 +245,69 @@ public class MoveInterpreter {
 		}
 
 		return result;
+
+	}
+
+	private boolean minorCanReach(int beginFile, int beginRank, int destFile, int destRank,
+		char piece){
+		//Need to check in a straight line in one of eight directions.
+		//Direction held in i, j variables.
+		//+i means up, -i means down
+		//+j means right, -j means left
+		//Direction determined by comparison of begin/dest
+
+		int i;
+		int j;
+
+		if(beginFile < destFile){
+			j = 1;
+		}else if(beginFile > destFile){
+			j = -1;
+		}else{
+			j = 0;
+		}
+
+		if(beginRank < destRank){
+			i = 1;
+		}else if(beginRank > destRank){
+			i = -1;
+		}else{
+			i = 0;
+		}
+
+		int fileDiff = Math.max(beginFile, destFile) - Math.min(beginFile, destFile);
+		int rankDiff = Math.max(beginRank, destRank) - Math.min(beginRank, destRank);
+
+		//check if conditions make sense for piece, e.g. diagonal is not rook/king,
+		//king has diffs <= 1
+
+		if(Math.abs(i) == 1 && Math.abs(j) == 1 && (piece == 'R' || piece == 'K')){
+			return false;
+		}
+
+		if(piece == 'K' && (fileDiff > 1 || rankDiff > 1)){
+			return false;
+		}
+
+		if(spaceArr[beginRank][beginFile].getPiece().getSymbol() != piece){
+			return false;
+		}
+
+		Space currSpace = null;
+		int currRank = beginRank;
+		int currFile = beginFile;
+
+		for(int p = 1; p < Math.max(fileDiff, rankDiff); p++){
+			currRank += i;
+			currFile += j;
+			currSpace = spaceArr[currRank][currFile];
+			if(currSpace.getPiece() != null){
+				//there is a collision
+				return false;
+			}
+		}
+
+		return true;
 
 	}
 
@@ -307,27 +378,21 @@ public class MoveInterpreter {
 		Space result = null;
 		int currRank = destRank;
 		int currFile = destFile;
-		if(beginFile != -1){/*
-			for(int i = 1; i <= Math.abs(destFile - beginFile); i++){
-				currRank = destRank - i;
-				currFile = destFile - i;
-
-				if(spaceArr[currRank][currFile].getPiece() != null
-					&& spaceArr[currRank][currFile].getPiece().getClass()
-					!= bsh.getClass()){
+		if(beginFile != -1){
+/*
+			for(int p = -1; p <= 1; p++){
+				if(p==0){break;}
+				currRank = destRank;
+				currFile = destFile;
+				for(int q = destFile; q < Math.max(beginFile, destFile); q++){
+					currRank += p;
+					currFile = q;
+					if(spaceArr[currRank][currFile].getPiece() != null){
 						//this case is a collision on the diagonal
 						break;
-				}
+					}
 
-				if(spaceArr[currRank][currFile].getPiece() != null
-					&& spaceArr[currRank][currFile].getPiece().getClass()
-					== bsh.getClass() &&
-					spaceArr[currRank][currFile].getPiece().getTeam()
-					== currBoard.getTurn()){
-						//conditions: it is a piece, it is a bishop, its turn is
-						//occurring now
-						numPossBishops++;
-						result = spaceArr[currRank][currFile];
+					
 				}
 			}*/
 		}else{
