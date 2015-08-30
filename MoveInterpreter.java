@@ -5,6 +5,7 @@ public class MoveInterpreter {
 	* -LONG-TERM: Detecting check(mate) (this file?)
 	* -LONG-TERM: Support castling q+k-side
 	* -pawn promotion
+	* -rook/queen handling beginfile moves
 	*/
 
 	private Board currBoard;
@@ -378,23 +379,30 @@ public class MoveInterpreter {
 		Space result = null;
 		int currRank = destRank;
 		int currFile = destFile;
+		boolean left = beginFile < destFile;
+		int fileDiff = Math.abs(beginFile - destFile);
 		if(beginFile != -1){
-/*
 			for(int p = -1; p <= 1; p++){
-				if(p==0){break;}
+				if(p!=0){
 				currRank = destRank;
 				currFile = destFile;
-				for(int q = destFile; q < Math.max(beginFile, destFile); q++){
+				for(int q = 1; q < fileDiff+1; q++){
 					currRank += p;
-					currFile = q;
-					if(spaceArr[currRank][currFile].getPiece() != null){
+					if(left){currFile--;}
+					if(currFile == beginFile &&
+					spaceArr[currRank][currFile].getPiece() != null &&
+					spaceArr[currRank][currFile].getPiece().getClass() ==
+					bsh.getClass() && spaceArr[currRank][currFile].getPiece().getTeam()
+					== currBoard.getTurn()){
+						numPossBishops++;
+						result = spaceArr[currRank][currFile];
+					}else if(spaceArr[currRank][currFile].getPiece() != null){
 						//this case is a collision on the diagonal
 						break;
-					}
-
-					
+					}	
 				}
-			}*/
+				}
+			}
 		}else{
 		for(int i = -1; i <= 1; i++){
 			for(int j = -1; j <= 1; j++){
@@ -452,8 +460,38 @@ public class MoveInterpreter {
 		Space result = null;
 		int currRank = destRank;
 		int currFile = destFile;
+		boolean vert = beginFile == destFile;
 		if(beginFile != -1){
-			
+			for(int p = -1; p <= 1; p++){
+				if(p!=0){
+				currRank = destRank;
+				currFile = destFile;
+				while(currRank >= 0 && currRank <= 7 && currFile >= 0
+				&& currFile <= 7){
+					if(vert){
+						currRank += p;
+					}else{
+						currFile += p;
+					}
+
+					if(!(currRank >= 0 && currRank <= 7 && currFile >= 0
+					&& currFile <= 7)){break;}
+
+					System.out.println("cR = " + currRank + ", cF = " + currFile);
+					if(currFile == beginFile &&
+					spaceArr[currRank][currFile].getPiece() != null &&
+					spaceArr[currRank][currFile].getPiece().getClass() ==
+					rk.getClass() && spaceArr[currRank][currFile].getPiece().getTeam()
+					== currBoard.getTurn()){
+						numPossRooks++;
+						result = spaceArr[currRank][currFile];
+					}else if(spaceArr[currRank][currFile].getPiece() != null){
+						//this case is a collision on the diagonal
+						break;
+					}	
+				}
+				}
+			}
 		}else{
 		for(int i = -1; i <=1; i++){
 			for(int j = -1; j <=1; j++){
@@ -492,6 +530,11 @@ public class MoveInterpreter {
 			}
 		}
 		}
+
+		if(numPossRooks >= 2){
+			return null;
+		}
+
 		return result;
 	}
 
