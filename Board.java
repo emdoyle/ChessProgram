@@ -2,15 +2,6 @@
  * Defines an object that can see all spaces and sets up chess pieces on them.
  * Does not extend or implement anything
  *
- * Note about 'spaces':
- *   
- *   this array is indexed in 1D from 0...(width*height)
- *   index 0 represents the bottom left corner
- *   the next index represents a move of one space to the
- *   right on the board, or wrapping around to the first of the
- *   next row if necessary.
- *
- *   Example: in an 8x8 board, spaces[19] refers to d3 in chess terms
  */
 public class Board {
 	
@@ -70,10 +61,11 @@ public class Board {
 	private void addMinorPieces(){
 		char black = 'b';
 		char white = 'w';
-
-		spaces[7][A_FILE].setPiece(new Rook(black));
-		spaces[7][H_FILE].setPiece(new Rook(black));
-		spaces[0][A_FILE].setPiece(new Rook(white));
+		//CHANGED
+		spaces[5][A_FILE].setPiece(new Rook(black));
+		spaces[5][H_FILE].setPiece(new Rook(black));
+		//CHANGED
+		spaces[0][A_FILE].setPiece(new Bishop(white));
 		spaces[0][H_FILE].setPiece(new Rook(white));
 
 		spaces[7][B_FILE].setPiece(new Knight(black));

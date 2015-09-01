@@ -5,7 +5,7 @@ public class MoveInterpreter {
 	* -LONG-TERM: Detecting check(mate) (this file?)
 	* -LONG-TERM: Support castling q+k-side
 	* -pawn promotion
-	* -rook/queen handling beginfile moves
+	* -queen handling beginfile moves
 	*/
 
 	private Board currBoard;
@@ -228,7 +228,8 @@ public class MoveInterpreter {
 			//initialized both
 			//need to make sure begin is proper piece, no collision
 			if(piece == 'N' && 
-			piece == spaceArr[beginRank][beginFile].getPiece().getSymbol()){
+			piece == spaceArr[beginRank][beginFile].getPiece().getSymbol()
+			&& spaceArr[beginRank][beginFile].getPiece().canReach(spaceArr[destRank][destFile])){
 				att = spaceArr[beginRank][beginFile];
 			}else if(minorCanReach(beginFile, beginRank, destFile, destRank, piece)){
 				att = spaceArr[beginRank][beginFile];
@@ -256,6 +257,11 @@ public class MoveInterpreter {
 		//+i means up, -i means down
 		//+j means right, -j means left
 		//Direction determined by comparison of begin/dest
+
+		if(piece == 'N'){
+			//Knight check failed
+			return false;
+		}
 
 		int i;
 		int j;
@@ -316,7 +322,7 @@ public class MoveInterpreter {
 		int numPossibleKnights = 0;
 		Knight kn = new Knight('w');
 		Space result = null;
-		if(beginFile == -1){
+		//if(beginFile == -1){
 		for(int i = -2; i <= 2; i++){
 			for(int j = -2; j <= 2; j++){
 				if(i != 0 && j != 0
@@ -327,7 +333,7 @@ public class MoveInterpreter {
 				&& destRank >= i*-1 && destRank <= 7-i){
 				//i and j represent the offset from the destination horizontally
 				//and vertically
-					if(spaceArr[destRank+i][destFile+j].getPiece() != null
+					if(beginFile == -1 && spaceArr[destRank+i][destFile+j].getPiece() != null
 					&& spaceArr[destRank+i][destFile+j].getPiece().getClass()
 					== kn.getClass() &&
 					spaceArr[destRank+i][destFile+j].getPiece().getTeam()
@@ -336,11 +342,18 @@ public class MoveInterpreter {
 					//having a turn now
 						numPossibleKnights++;
 						result = spaceArr[destRank+i][destFile+j];
+					}else if(destFile+j == beginFile && spaceArr[destRank+i][destFile+j].getPiece() != null
+					&& spaceArr[destRank+i][destFile+j].getPiece().getClass()
+					== kn.getClass() &&
+					spaceArr[destRank+i][destFile+j].getPiece().getTeam()
+					== currBoard.getTurn()){
+						numPossibleKnights++;
+						result = spaceArr[destRank+i][destFile+j];
 					}
 				}
 			}
 		}
-		}else{
+		/*}else{
 			int rankOffset = 0;
 			if(Math.abs(beginFile - destFile) == 1){
 				rankOffset = 2;
@@ -361,7 +374,7 @@ public class MoveInterpreter {
 				}
 			}
 
-		}
+		}*/
 
 		if(numPossibleKnights >= 2){
 			return null;
@@ -381,29 +394,6 @@ public class MoveInterpreter {
 		int currFile = destFile;
 		boolean left = beginFile < destFile;
 		int fileDiff = Math.abs(beginFile - destFile);
-		if(beginFile != -1){
-			for(int p = -1; p <= 1; p++){
-				if(p!=0){
-				currRank = destRank;
-				currFile = destFile;
-				for(int q = 1; q < fileDiff+1; q++){
-					currRank += p;
-					if(left){currFile--;}
-					if(currFile == beginFile &&
-					spaceArr[currRank][currFile].getPiece() != null &&
-					spaceArr[currRank][currFile].getPiece().getClass() ==
-					bsh.getClass() && spaceArr[currRank][currFile].getPiece().getTeam()
-					== currBoard.getTurn()){
-						numPossBishops++;
-						result = spaceArr[currRank][currFile];
-					}else if(spaceArr[currRank][currFile].getPiece() != null){
-						//this case is a collision on the diagonal
-						break;
-					}	
-				}
-				}
-			}
-		}else{
 		for(int i = -1; i <= 1; i++){
 			for(int j = -1; j <= 1; j++){
 			//i and j are only allowed to be 1 or -1
@@ -429,7 +419,7 @@ public class MoveInterpreter {
 							break;
 						}
 
-						if(spaceArr[currRank][currFile].getPiece() != null
+						if(beginFile == -1 && spaceArr[currRank][currFile].getPiece() != null
 						&& spaceArr[currRank][currFile].getPiece().getClass()
 						== bsh.getClass() &&
 						spaceArr[currRank][currFile].getPiece().getTeam()
@@ -438,11 +428,17 @@ public class MoveInterpreter {
 						//occurring now
 							numPossBishops++;
 							result = spaceArr[currRank][currFile];
+						}else if(currFile == beginFile && spaceArr[currRank][currFile].getPiece() != null
+						&& spaceArr[currRank][currFile].getPiece().getClass()
+						== bsh.getClass() &&
+						spaceArr[currRank][currFile].getPiece().getTeam()
+						== currBoard.getTurn()){
+							numPossBishops++;
+							result = spaceArr[currRank][currFile];
 						}
 					}
 				}
 			}
-		}
 		}
 
 		if(numPossBishops >= 2){
@@ -461,7 +457,7 @@ public class MoveInterpreter {
 		int currRank = destRank;
 		int currFile = destFile;
 		boolean vert = beginFile == destFile;
-		if(beginFile != -1){
+		/*if(beginFile != -1){
 			for(int p = -1; p <= 1; p++){
 				if(p!=0){
 				currRank = destRank;
@@ -492,7 +488,7 @@ public class MoveInterpreter {
 				}
 				}
 			}
-		}else{
+		}else{*/
 		for(int i = -1; i <=1; i++){
 			for(int j = -1; j <=1; j++){
 				//reset currRank and currFile
@@ -516,7 +512,7 @@ public class MoveInterpreter {
 							break;
 						}
 
-						if(spaceArr[currRank][currFile].getPiece() != null
+						if(beginFile == -1 && spaceArr[currRank][currFile].getPiece() != null
 							&& spaceArr[currRank][currFile].getPiece().getClass()
 							== rk.getClass() &&
 							spaceArr[currRank][currFile].getPiece().getTeam()
@@ -524,12 +520,19 @@ public class MoveInterpreter {
 							//conditions: is a piece, is a rook, has a turn
 							numPossRooks++;
 							result = spaceArr[currRank][currFile];
+						}else if(currFile == beginFile && spaceArr[currRank][currFile].getPiece() != null
+							&& spaceArr[currRank][currFile].getPiece().getClass()
+							== rk.getClass() &&
+							spaceArr[currRank][currFile].getPiece().getTeam()
+							== currBoard.getTurn()){
+							numPossRooks++;
+							result = spaceArr[currRank][currFile];
 						}
 					}
 				}
 			}
 		}
-		}
+		//}
 
 		if(numPossRooks >= 2){
 			return null;
@@ -574,13 +577,20 @@ public class MoveInterpreter {
 						break;
 					}
 
-					if(spaceArr[currRank][currFile].getPiece() != null
+					if(beginFile == -1 && spaceArr[currRank][currFile].getPiece() != null
 					&& spaceArr[currRank][currFile].getPiece().getClass()
 					== qn.getClass() &&
 					spaceArr[currRank][currFile].getPiece().getTeam()
 					== currBoard.getTurn()){
 					//conditions: it is a piece, it is a queen, its turn is
 					//occurring now
+						numPossQueens++;
+						result = spaceArr[currRank][currFile];
+					}else if(currFile == beginFile && spaceArr[currRank][currFile].getPiece() != null
+					&& spaceArr[currRank][currFile].getPiece().getClass()
+					== qn.getClass() &&
+					spaceArr[currRank][currFile].getPiece().getTeam()
+					== currBoard.getTurn()){
 						numPossQueens++;
 						result = spaceArr[currRank][currFile];
 					}
