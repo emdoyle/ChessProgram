@@ -5,7 +5,6 @@ public class MoveInterpreter {
 	* -LONG-TERM: Detecting check(mate) (this file?)
 	* -LONG-TERM: Support castling q+k-side
 	* -pawn promotion
-	* -queen handling beginfile moves
 	*/
 
 	private Board currBoard;
@@ -322,7 +321,6 @@ public class MoveInterpreter {
 		int numPossibleKnights = 0;
 		Knight kn = new Knight('w');
 		Space result = null;
-		//if(beginFile == -1){
 		for(int i = -2; i <= 2; i++){
 			for(int j = -2; j <= 2; j++){
 				if(i != 0 && j != 0
@@ -353,29 +351,6 @@ public class MoveInterpreter {
 				}
 			}
 		}
-		/*}else{
-			int rankOffset = 0;
-			if(Math.abs(beginFile - destFile) == 1){
-				rankOffset = 2;
-			}else if(Math.abs(beginFile - destFile) == 2){
-				rankOffset = 1;
-			}
-			for(int i = -1; i <= 1; i+=2){
-				if(destRank + rankOffset*i <= 7 && destRank + rankOffset*i >= 0
-					&& spaceArr[destRank+rankOffset*i][beginFile].getPiece() != null
-					&& spaceArr[destRank+rankOffset*i][beginFile].getPiece().getClass()
-					== kn.getClass() &&
-					spaceArr[destRank+rankOffset*i][beginFile].getPiece().getTeam()
-					== currBoard.getTurn()){
-					//conditions: there is a piece, it is a knight, it is on the team
-					//having a turn now
-					numPossibleKnights++;
-					result = spaceArr[destRank+rankOffset*i][beginFile];
-				}
-			}
-
-		}*/
-
 		if(numPossibleKnights >= 2){
 			return null;
 		}
@@ -457,38 +432,6 @@ public class MoveInterpreter {
 		int currRank = destRank;
 		int currFile = destFile;
 		boolean vert = beginFile == destFile;
-		/*if(beginFile != -1){
-			for(int p = -1; p <= 1; p++){
-				if(p!=0){
-				currRank = destRank;
-				currFile = destFile;
-				while(currRank >= 0 && currRank <= 7 && currFile >= 0
-				&& currFile <= 7){
-					if(vert){
-						currRank += p;
-					}else{
-						currFile += p;
-					}
-
-					if(!(currRank >= 0 && currRank <= 7 && currFile >= 0
-					&& currFile <= 7)){break;}
-
-					System.out.println("cR = " + currRank + ", cF = " + currFile);
-					if(currFile == beginFile &&
-					spaceArr[currRank][currFile].getPiece() != null &&
-					spaceArr[currRank][currFile].getPiece().getClass() ==
-					rk.getClass() && spaceArr[currRank][currFile].getPiece().getTeam()
-					== currBoard.getTurn()){
-						numPossRooks++;
-						result = spaceArr[currRank][currFile];
-					}else if(spaceArr[currRank][currFile].getPiece() != null){
-						//this case is a collision on the diagonal
-						break;
-					}	
-				}
-				}
-			}
-		}else{*/
 		for(int i = -1; i <=1; i++){
 			for(int j = -1; j <=1; j++){
 				//reset currRank and currFile
@@ -532,7 +475,6 @@ public class MoveInterpreter {
 				}
 			}
 		}
-		//}
 
 		if(numPossRooks >= 2){
 			return null;
