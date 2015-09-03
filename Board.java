@@ -61,11 +61,10 @@ public class Board {
 	private void addMinorPieces(){
 		char black = 'b';
 		char white = 'w';
-		//CHANGED
-		spaces[5][A_FILE].setPiece(new Rook(black));
-		spaces[5][H_FILE].setPiece(new Rook(black));
-		//CHANGED
-		spaces[0][A_FILE].setPiece(new Bishop(white));
+		
+		spaces[7][A_FILE].setPiece(new Rook(black));
+		spaces[7][H_FILE].setPiece(new Rook(black));
+		spaces[0][A_FILE].setPiece(new Rook(white));
 		spaces[0][H_FILE].setPiece(new Rook(white));
 
 		spaces[7][B_FILE].setPiece(new Knight(black));
