@@ -4,7 +4,7 @@ public class Move {
 	//private double startTime, endTime;
 	private Piece attacker, victim;
 	private Space beginSpace, endSpace;
-	private boolean promotion, check;
+	private boolean promotion, check, castle;
 
 	public Move(){
 		attacker = null;
@@ -13,6 +13,7 @@ public class Move {
 		endSpace = null;
 		promotion = false;
 		check = false;
+		castle = false;
 	}	
 
 	public Move(Space beginSpace, Space endSpace){
@@ -76,6 +77,14 @@ public class Move {
 
 	public void setPromotion(boolean flag){
 		promotion = flag;
+	}
+
+	public void setCastle(boolean flag){
+		castle = flag;
+	}
+
+	public boolean getCastle(){
+		return castle;
 	}
 
 }

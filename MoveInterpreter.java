@@ -20,7 +20,7 @@ public class MoveInterpreter {
 		if ( line == "" || line.length() == 1 ) {
 			return null;
 		}
-		if ( line.length() > 10 ) {
+		if ( line.length() > 6 ) {
 			return null;
 		}
 
@@ -38,9 +38,57 @@ public class MoveInterpreter {
 			return minorPieceMove('Q', line);
 		}else if(firstChar == 'K'){
 			return minorPieceMove('K', line);
+		}else if(firstChar == 'O' || firstChar == '0'){
+			return castle(line);
 		}else{
 			return null;
 		}
+
+	}
+
+	private Move castle(String line){
+		Move result = new Move();
+		
+		if(line.equals("O-O")){
+			if(currBoard.getCastle(currBoard.getTurn(), 'k')){
+				if(currBoard.getTurn() == 'w'){
+					if(spaceArr[0][6].getPiece() == null &&
+						spaceArr[0][5].getPiece() == null){
+						result.setCastle(true);
+						result.setAttacker(spaceArr[0][4].getPiece());
+						result.setVictim(spaceArr[0][7].getPiece());
+					}
+				}else{
+					if(spaceArr[7][6].getPiece() == null &&
+						spaceArr[7][5].getPiece() == null){
+						result.setCastle(true);
+						result.setAttacker(spaceArr[7][4].getPiece());
+						result.setVictim(spaceArr[7][7].getPiece());
+					}
+				}
+			}
+		}else if(line.equals("O-O-O")){
+			if(currBoard.getCastle(currBoard.getTurn(), 'q')){
+				if(currBoard.getTurn() == 'w'){
+					if(spaceArr[0][1].getPiece() == null &&
+						spaceArr[0][2].getPiece() == null &&
+						spaceArr[0][3].getPiece() == null){
+						result.setCastle(true);
+						result.setAttacker(spaceArr[0][4].getPiece());
+						result.setVictim(spaceArr[0][0].getPiece());
+					}
+				}else{
+					if(spaceArr[7][1].getPiece() == null &&
+						spaceArr[7][2].getPiece() == null &&
+						spaceArr[7][3].getPiece() == null){
+						result.setCastle(true);
+						result.setAttacker(spaceArr[7][4].getPiece());
+						result.setVictim(spaceArr[7][0].getPiece());
+					}
+				}
+			}
+		}
+		return result;
 
 	}
 

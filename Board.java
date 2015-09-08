@@ -4,6 +4,10 @@
  *
  */
 public class Board {
+
+/*
+ * TODO: Add check-detection
+ */
 	
 	private static final int A_FILE=0;
 	private static final int B_FILE=1;
@@ -16,6 +20,10 @@ public class Board {
 
 	private Space[][] spaces;
 	private boolean whiteTurn = true;
+	private boolean whiteQCastle = true;
+	private boolean whiteKCastle = true;
+	private boolean blackQCastle = true;
+	private boolean blackKCastle = true;
 	private int width, height;
 	
   //constructor creates a board with the specified width and height
@@ -70,12 +78,12 @@ public class Board {
 		spaces[7][B_FILE].setPiece(new Knight(black));
 		spaces[7][G_FILE].setPiece(new Knight(black));
 		spaces[0][B_FILE].setPiece(new Knight(white));
-		spaces[0][G_FILE].setPiece(new Knight(white));
+		//spaces[0][G_FILE].setPiece(new Knight(white));
 
 		spaces[7][C_FILE].setPiece(new Bishop(black));
 		spaces[7][F_FILE].setPiece(new Bishop(black));
 		spaces[0][C_FILE].setPiece(new Bishop(white));
-		spaces[0][F_FILE].setPiece(new Bishop(white));
+		//spaces[0][F_FILE].setPiece(new Bishop(white));
 
 		spaces[7][D_FILE].setPiece(new Queen(black));
 		spaces[7][E_FILE].setPiece(new King(black));
@@ -139,4 +147,43 @@ public class Board {
 		whiteTurn = flag;
 	}
 
+	public void setCastle(char team, char side, boolean flag){
+		team = Character.toLowerCase(team);
+		side = Character.toLowerCase(side);
+
+		if(team == 'w'){
+			if(side == 'q'){
+				whiteQCastle = flag;
+			}else if(side == 'k'){
+				whiteKCastle = flag;
+			}
+		}else if(team == 'b'){
+			if(side == 'q'){
+				blackQCastle = flag;
+			}else if(side == 'k'){
+				blackKCastle = flag;
+			}
+		}
+	}
+
+	public boolean getCastle(char team, char side){
+		team = Character.toLowerCase(team);
+		side = Character.toLowerCase(side);
+
+		if(team == 'w'){
+			if(side == 'q'){
+				return whiteQCastle;
+			}else if(side == 'k'){
+				return whiteKCastle;
+			}
+		}else if(team == 'b'){
+			if(side == 'q'){
+				return blackQCastle;
+			}else if(side == 'k'){
+				return blackKCastle;
+			}
+		}
+
+		return false;
+	}
 }
