@@ -17,8 +17,17 @@ public class GameController {
 		while(!selectedMove.equals("quit")){
 			currMove = interp.parseMove(selectedMove);
 			exec.executeMove(currMove);
+			clearConsole();
 			currentBoard.displayBoard();
 			selectedMove = input.nextLine();
 		}
 	}
+
+	private final static void clearConsole(){
+		//credit: coderanch.com/t/631492/java/java/clear-console-screen
+		//\033 is escape code in ASCII, H moves to top, 2J clears all
+		System.out.print("\033[H\033[2J");
+	}
+
+	
 }

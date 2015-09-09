@@ -57,8 +57,7 @@ public class Board {
 		if(width == 8 && height == 8){
 			  for(int i = A_FILE; i <= H_FILE; i++){
 				  spaces[6][i].setPiece(new Pawn('b'));
-//CHANGED FOR TESTING
-				  spaces[5][i].setPiece(new Pawn('w'));
+				  spaces[1][i].setPiece(new Pawn('w'));
 				}
 				addMinorPieces();
 		}
