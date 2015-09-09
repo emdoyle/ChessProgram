@@ -11,7 +11,7 @@ public class GameController {
 		String selectedMove;
 		Move currMove;
 		MoveInterpreter interp = new MoveInterpreter(currentBoard);
-		MoveExecuter exec = new MoveExecuter(currentBoard);
+		MoveExecuter exec = new MoveExecuter(currentBoard, input);
 		System.out.println("Type a move code or type 'quit' to quit.");
 		selectedMove = input.nextLine();
 		while(!selectedMove.equals("quit")){
@@ -20,33 +20,5 @@ public class GameController {
 			currentBoard.displayBoard();
 			selectedMove = input.nextLine();
 		}
-
-		/*System.out.println("Board[4][3] has rank: " +
-		spaceArr[4][3].getRank() + " and file: " +
-		spaceArr[4][3].getFile() + "\nand code: " +
-		spaceArr[4][3].getCode());*/
-
-		/*Move testMove = interp.parseMove("a4");
-		exec.executeMove(testMove);
-		currentBoard.displayBoard();
-
-		testMove = interp.parseMove("b5");
-		exec.executeMove(testMove);
-		currentBoard.displayBoard();
-
-		testMove = interp.parseMove("c4");
-		exec.executeMove(testMove);
-		currentBoard.displayBoard();
-
-		testMove = interp.parseMove("d6");
-		exec.executeMove(testMove);
-		currentBoard.displayBoard();
-
-		System.out.println("axb5");
-		testMove = interp.parseMove("axb5");
-		exec.executeMove(testMove);
-		currentBoard.displayBoard();*/
-
 	}
-
 }

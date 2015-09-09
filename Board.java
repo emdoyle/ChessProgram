@@ -57,7 +57,8 @@ public class Board {
 		if(width == 8 && height == 8){
 			  for(int i = A_FILE; i <= H_FILE; i++){
 				  spaces[6][i].setPiece(new Pawn('b'));
-				  spaces[1][i].setPiece(new Pawn('w'));
+//CHANGED FOR TESTING
+				  spaces[5][i].setPiece(new Pawn('w'));
 				}
 				addMinorPieces();
 		}
@@ -78,12 +79,12 @@ public class Board {
 		spaces[7][B_FILE].setPiece(new Knight(black));
 		spaces[7][G_FILE].setPiece(new Knight(black));
 		spaces[0][B_FILE].setPiece(new Knight(white));
-		//spaces[0][G_FILE].setPiece(new Knight(white));
+		spaces[0][G_FILE].setPiece(new Knight(white));
 
 		spaces[7][C_FILE].setPiece(new Bishop(black));
 		spaces[7][F_FILE].setPiece(new Bishop(black));
 		spaces[0][C_FILE].setPiece(new Bishop(white));
-		//spaces[0][F_FILE].setPiece(new Bishop(white));
+		spaces[0][F_FILE].setPiece(new Bishop(white));
 
 		spaces[7][D_FILE].setPiece(new Queen(black));
 		spaces[7][E_FILE].setPiece(new King(black));

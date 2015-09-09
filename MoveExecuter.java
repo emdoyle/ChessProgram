@@ -4,24 +4,37 @@
 * [7][0] = a8,  [7][7] = h8
 */
 
+import java.util.Scanner;
+
 public class MoveExecuter{
 
 	private Board currBoard;
 	private Space[][] spaceArr;
+	private Scanner input;
 
-	public MoveExecuter(Board b){
+	public MoveExecuter(Board b, Scanner input){
 		currBoard = b;
 		spaceArr = b.getSpacesArray();
+		this.input = input;
 	}
 
 	public void executeMove(Move m){
+		if(m == null){
+			System.out.println("Move failed");
+			return;
+		}
 
 		if(m.getCastle()){
 			executeCastle(m);
 			return;
-		}		
+		}
 
-		if(m == null || m.getAttacker() == null
+		if(m.isPromotion()){
+			executePromotion(m);
+			return;
+		}
+
+		if(m.getAttacker() == null
 		|| m.getBegin() == null || m.getEnd()
 		== null){
 			System.out.println("Move failed");
@@ -109,6 +122,63 @@ public class MoveExecuter{
 
 		begin.setOccupied(false);
 		attacker.setSpace(end);
+		spaceArr[end.getRank()][end.getFile()].setPiece(attacker);
+		spaceArr[begin.getRank()][begin.getFile()].setPiece(null);
+
+		currBoard.setSpacesArray(spaceArr);
+		currBoard.setWhiteTurn(!currBoard.getWhiteTurn());
+	}
+
+	public void executePromotion(Move m){
+		if(m == null || m.getAttacker() == null
+		|| m.getBegin() == null || m.getEnd()
+		== null){
+			System.out.println("Move failed");
+			return;
+		}
+
+		Piece attacker = m.getAttacker();
+		Piece victim = m.getVictim();
+		Space begin = m.getBegin();
+		Space end = m.getEnd();
+
+		System.out.println("Enter code for piece to promote to: (N, B, R, Q)");
+		Piece newAttacker = null;
+
+		String selectedPiece = input.nextLine();
+		while(!selectedPiece.equals("quit")){
+			switch(selectedPiece.charAt(0)){
+				case 'N':
+					newAttacker = new Knight(currBoard.getTurn());
+					break;
+				case 'B':
+					newAttacker = new Bishop(currBoard.getTurn());
+					break;
+				case 'R':
+					newAttacker = new Rook(currBoard.getTurn());
+					break;
+				case 'Q':
+					newAttacker = new Queen(currBoard.getTurn());
+					break;
+				default:
+					System.out.println("Not recognized");
+					break;
+			}
+			if(newAttacker == null){
+				selectedPiece = input.nextLine();
+			}else{
+				break;
+			}
+		}
+
+		if(newAttacker == null){
+			System.out.println("Please type 'quit' once more");
+			return;
+		}
+
+		begin.setOccupied(false);
+		attacker = newAttacker;
+		newAttacker.setSpace(end);
 		spaceArr[end.getRank()][end.getFile()].setPiece(attacker);
 		spaceArr[begin.getRank()][begin.getFile()].setPiece(null);
 

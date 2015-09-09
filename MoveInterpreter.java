@@ -3,7 +3,6 @@ public class MoveInterpreter {
 	/*
 	* NEED TO FIX/DO
 	* -LONG-TERM: Detecting check(mate) (this file?)
-	* -LONG-TERM: Support castling q+k-side
 	* -pawn promotion
 	*/
 
@@ -97,6 +96,10 @@ public class MoveInterpreter {
 		return file-97;
 	}
 
+	private boolean inRange(int num){
+		return num <= 7 && num >= 0;
+	}
+
 	private Move PawnMove(String line){
 	/*
 	* NEED TO DO:
@@ -116,7 +119,7 @@ public class MoveInterpreter {
 			}
 
 			if(currBoard.getWhiteTurn() &&
-			secondRank >= 1 && spaceArr[secondRank-1][firstFile].getPiece()
+			inRange(secondRank-1) && spaceArr[secondRank-1][firstFile].getPiece()
 			!= null &&
 			spaceArr[secondRank-1][firstFile].getPiece().getTeam()=='w' &&
 			spaceArr[secondRank][secondFile].getPiece().getTeam() == 'b'){
@@ -125,7 +128,7 @@ public class MoveInterpreter {
 				spaceArr[secondRank-1][firstFile]);
 			
 			}else if(!currBoard.getWhiteTurn() &&
-			secondRank <= 6 && spaceArr[secondRank+1][firstFile].getPiece()
+			inRange(secondRank+1) && spaceArr[secondRank+1][firstFile].getPiece()
 			!= null &&
 			spaceArr[secondRank+1][firstFile].getPiece().getTeam()=='b' &&
 			spaceArr[secondRank][secondFile].getPiece().getTeam() == 'w'){
@@ -140,11 +143,11 @@ public class MoveInterpreter {
 			int destRank= Character.getNumericValue(line.charAt(1))-1;
 
 			//check if destination space is free
-			if(spaceArr[destRank][firstFile].getPiece() != null){
+			if(inRange(destRank) && spaceArr[destRank][firstFile].getPiece() != null){
 				return null;
 			}			
 
-			if(destRank >=1 && 
+			if(inRange(destRank-1) && 
 			spaceArr[destRank-1][firstFile].getPiece() != null
 			&& spaceArr[destRank-1][firstFile].
 			getPiece().getClass() == pwn.getClass() &&
@@ -153,7 +156,8 @@ public class MoveInterpreter {
 				//this executes when white pawn moves one space up board
 				result.setBegin(spaceArr[destRank-1][firstFile]);
 
-			}else if(spaceArr[destRank+1][firstFile].getPiece() != null
+			}else if(inRange(destRank+1) &&
+			spaceArr[destRank+1][firstFile].getPiece() != null
 			&& spaceArr[destRank+1][firstFile].
 			getPiece().getClass() == pwn.getClass() &&
 			spaceArr[destRank+1][firstFile].getPiece().getTeam()=='b'
@@ -185,6 +189,12 @@ public class MoveInterpreter {
 
 		}
 		//after either move, check for check/promotion?
+
+		if((currBoard.getTurn() == 'w' && result.getEnd().getRank() == 7) ||
+			(currBoard.getTurn() == 'b' && result.getEnd().getRank() == 0)){
+			result.setPromotion(true);
+		}
+
 		return result;
 
 	}
