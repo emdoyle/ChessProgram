@@ -3,7 +3,8 @@ import java.util.Scanner;
 public class GameController {
 
 	public static void main(String[] args){
-		Scanner input = new Scanner( System.in );	
+		Scanner input = new Scanner( System.in );
+		clearConsole();	
 		System.out.println("Chess program has started, about to display board\n");
 		Board currentBoard = new Board(8, 8);
 		currentBoard.displayBoard();
@@ -16,11 +17,12 @@ public class GameController {
 		selectedMove = input.nextLine();
 		while(!selectedMove.equals("quit")){
 			currMove = interp.parseMove(selectedMove);
-			exec.executeMove(currMove);
 			clearConsole();
+			exec.executeMove(currMove);
 			currentBoard.displayBoard();
 			selectedMove = input.nextLine();
 		}
+		clearConsole();
 	}
 
 	private final static void clearConsole(){

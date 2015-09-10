@@ -19,11 +19,15 @@ public class Board {
 	private static final int H_FILE=7;
 
 	private Space[][] spaces;
+	private King whiteKing = new King('w');
+	private King blackKing = new King('b');
 	private boolean whiteTurn = true;
 	private boolean whiteQCastle = true;
 	private boolean whiteKCastle = true;
 	private boolean blackQCastle = true;
 	private boolean blackKCastle = true;
+	private boolean whiteInCheck = false;
+	private boolean blackInCheck = false;
 	private int width, height;
 	
   //constructor creates a board with the specified width and height
@@ -36,6 +40,10 @@ public class Board {
 		initSpaces(width, height);
 		addChessPieces();
 		
+	}
+
+	private boolean inRange(int num){
+		return num >= 0 && num <= 7;
 	}
 	
   //initializes the spaces array with Space objects
@@ -86,9 +94,9 @@ public class Board {
 		spaces[0][F_FILE].setPiece(new Bishop(white));
 
 		spaces[7][D_FILE].setPiece(new Queen(black));
-		spaces[7][E_FILE].setPiece(new King(black));
+		spaces[7][E_FILE].setPiece(blackKing);
 		spaces[0][D_FILE].setPiece(new Queen(white));
-		spaces[0][E_FILE].setPiece(new King(white));
+		spaces[0][E_FILE].setPiece(whiteKing);
 
 	}
 
@@ -185,5 +193,150 @@ public class Board {
 		}
 
 		return false;
+	}
+
+	public boolean detectCheck(char team){
+		King currentKing = null;
+		if(team == 'w'){
+			currentKing = whiteKing;
+		}else if(team == 'b'){
+			currentKing = blackKing;
+		}else{
+			System.out.println("invalid team character in detectCheck");
+			return false;
+		}
+
+		Space kingSpace = currentKing.getSpace();
+		int kingRank = kingSpace.getRank();
+		int kingFile = kingSpace.getFile();
+
+		if(checkPawnSpots(kingRank, kingFile, team)){
+			setCheck(team, true);
+			return true;
+		}
+
+		if(checkKnightSpots(kingRank, kingFile, team)){
+			setCheck(team, true);
+			return true;
+		}
+
+		int currentRank = -1;
+		int currentFile = -1;
+
+		boolean diagonal = false;
+		boolean horizOrVert = false;
+		boolean blocked = false;
+
+		for(int i = -1; i <= 1; i++){
+			for(int j = -1; j <=1; j++){
+				currentRank = kingRank;
+				currentFile = kingFile;
+
+				diagonal = Math.abs(i) == 1 && Math.abs(j) == 1;
+				horizOrVert = Math.abs(i) == 1 || Math.abs(j) == 1 && !diagonal;
+
+				blocked = false;
+
+				if(!(i == 0 && j == 0)){
+					while(!blocked && inRange(currentRank+i) && inRange(currentFile+j)){
+						currentRank += i;
+						currentFile += j;
+
+						Space checkSpace = spaces[currentRank][currentFile];
+						Piece checkPiece = null;
+
+						if(checkSpace.getPiece() != null){
+							checkPiece = checkSpace.getPiece();
+							if(diagonal && checkPiece.getSymbol() == 'B' &&
+								checkPiece.getTeam() != team){
+								setCheck(team, true);
+								return true;
+							}
+							if(horizOrVert && checkPiece.getSymbol() == 'R' &&
+								checkPiece.getTeam() != team){
+								setCheck(team, true);
+								return true;
+							}
+							if(checkPiece.getSymbol() == 'Q' &&
+								checkPiece.getTeam() != team){
+								setCheck(team, true);
+								return true;
+							}
+							blocked = true;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	private boolean checkPawnSpots(int kingRank, int kingFile, char team){
+		int checkRank = -1;
+		if(team == 'w'){
+			checkRank = kingRank + 1;
+		}else{
+			checkRank = kingRank - 1;
+		}
+
+		if(checkRank < 0 || checkRank > 7){
+			return false;
+		}
+		for(int i = -1; i <= 1; i++){
+			if(i != 0 && spaces[checkRank][kingFile+i].getPiece() != null &&
+				spaces[checkRank][kingFile+i].getPiece().getTeam() != team &&
+				spaces[checkRank][kingFile+i].getPiece().getSymbol() == 'P'){
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private boolean checkKnightSpots(int kingRank, int kingFile, char team){
+		for(int i = -2; i <= 2; i++){
+			for(int j = -2; j <= 2; j++){
+				if(i != 0 && j != 0
+				&& !((Math.abs(i) == 1)
+				&& (Math.abs(j) == 1))
+				&& !(i%2 == 0 && j%2 == 0)
+				&& kingFile >= j*-1 && kingFile <= 7-j
+				&& kingRank >= i*-1 && kingRank <= 7-i){
+					if(spaces[kingRank+i][kingFile+j].getPiece() != null &&
+					spaces[kingRank+i][kingFile+j].getPiece().getTeam() != team &&
+					spaces[kingRank+i][kingFile+j].getPiece().getSymbol() == 'N'){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	public boolean detectCheckMate(char team){
+		if(!getCheck(team)){return false;}
+
+		return false;
+	}
+
+	public boolean getCheck(char team){
+		if(team == 'w'){
+			return whiteInCheck;
+		}else if(team == 'b'){
+			return blackInCheck;
+		}else{
+			System.out.println("Improperly called getCheck");
+			return false;
+		}
+	}
+
+	public void setCheck(char team, boolean flag){
+		if(team == 'w'){
+			whiteInCheck = flag;
+		}else if(team == 'b'){
+			blackInCheck = flag;
+		}else{
+			System.out.println("Improperly called setCheck");
+		}
 	}
 }

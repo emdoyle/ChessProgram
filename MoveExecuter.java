@@ -18,6 +18,17 @@ public class MoveExecuter{
 		this.input = input;
 	}
 
+	private char invertTeam(char team){
+		if(team == 'w'){
+			return 'b';
+		}else if(team == 'b'){
+			return 'w';
+		}else{
+			System.out.println("Improper call of invertTeam");
+			return 'w';
+		}
+	}
+
 	public void executeMove(Move m){
 		if(m == null){
 			System.out.println("Move failed");
@@ -72,6 +83,9 @@ public class MoveExecuter{
 			}
 		}
 
+		if(currBoard.detectCheck(invertTeam(currBoard.getTurn()))){
+			System.out.println("Check!");
+		}
 		currBoard.setSpacesArray(spaceArr);
 		currBoard.setWhiteTurn(!currBoard.getWhiteTurn());
 	}

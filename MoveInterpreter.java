@@ -2,8 +2,7 @@ public class MoveInterpreter {
 
 	/*
 	* NEED TO FIX/DO
-	* -LONG-TERM: Detecting check(mate) (this file?)
-	* -pawn promotion
+	* -LONG-TERM: Detecting check(mate)
 	*/
 
 	private Board currBoard;
