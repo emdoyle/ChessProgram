@@ -28,7 +28,9 @@ public class Board {
 	private boolean blackKCastle = true;
 	private boolean whiteInCheck = false;
 	private boolean blackInCheck = false;
-	private char enPassantFile = 'x'; //x indicates no e.p.
+	//if enPassantW = 'c', then the white c-pawn is vulnerable to en passant
+	private char enPassantFileW = 'x'; //x indicates no e.p.
+	private char enPassantFileB = 'x';
 	private int width, height;
 	
   //constructor creates a board with the specified width and height

@@ -4,7 +4,7 @@ public class Move {
 	//private double startTime, endTime;
 	private Piece attacker, victim;
 	private Space beginSpace, endSpace;
-	private boolean promotion, check, castle;
+	private boolean promotion, check, castle, enPassant;
 
 	public Move(){
 		attacker = null;
@@ -14,6 +14,7 @@ public class Move {
 		promotion = false;
 		check = false;
 		castle = false;
+		enPassant = false;
 	}	
 
 	public Move(Space beginSpace, Space endSpace){
@@ -85,6 +86,14 @@ public class Move {
 
 	public boolean getCastle(){
 		return castle;
+	}
+
+	public void setEnPassant(boolean flag){
+		enPassant = flag;
+	}
+
+	public boolean isEnPassant(){
+		return enPassant;
 	}
 
 }

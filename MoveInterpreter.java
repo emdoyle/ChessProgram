@@ -95,15 +95,16 @@ public class MoveInterpreter {
 		return file-97;
 	}
 
+	private char intToFile(int integerFile){
+		char charFile = (char) integerFile;
+		return (char)(charFile+97);
+	}
+
 	private boolean inRange(int num){
 		return num <= 7 && num >= 0;
 	}
 
 	private Move PawnMove(String line){
-	/*
-	* NEED TO DO:
-	* Handle promotion at rank 0 and 7
-	*/
 		Move result = new Move();
 		Pawn pwn = new Pawn('w');
 		int firstFile = fileToInt(line.charAt(0));
@@ -120,20 +121,30 @@ public class MoveInterpreter {
 			if(currBoard.getWhiteTurn() &&
 			inRange(secondRank-1) && spaceArr[secondRank-1][firstFile].getPiece()
 			!= null &&
-			spaceArr[secondRank-1][firstFile].getPiece().getTeam()=='w' &&
-			spaceArr[secondRank][secondFile].getPiece().getTeam() == 'b'){
+			spaceArr[secondRank-1][firstFile].getPiece().getTeam()=='w'){
 				//white pawn capturing up
-				result.setBegin(
-				spaceArr[secondRank-1][firstFile]);
-			
+				if(spaceArr[secondRank][secondFile].isOccupied() &&
+				spaceArr[secondRank][secondFile].getPiece().getTeam() == 'b'){ 
+					result.setBegin(spaceArr[secondRank-1][firstFile]);
+				}else if(currBoard.getEnPassant('b') == intToFile(secondFile)
+				&& secondRank == 5){
+					result.setBegin(spaceArr[secondRank-1][firstFile]);
+					result.setEnPassant(true);
+					System.out.println("registered white en passant");
+				}
 			}else if(!currBoard.getWhiteTurn() &&
 			inRange(secondRank+1) && spaceArr[secondRank+1][firstFile].getPiece()
 			!= null &&
-			spaceArr[secondRank+1][firstFile].getPiece().getTeam()=='b' &&
-			spaceArr[secondRank][secondFile].getPiece().getTeam() == 'w'){
+			spaceArr[secondRank+1][firstFile].getPiece().getTeam()=='b'){
 				//black pawn capturing down
-				result.setBegin(
-				spaceArr[secondRank+1][firstFile]);
+				if(spaceArr[secondRank][secondFile].isOccupied() &&
+				spaceArr[secondRank][secondFile].getPiece().getTeam() == 'w'){ 
+					result.setBegin(spaceArr[secondRank+1][firstFile]);
+				}else if(currBoard.getEnPassant('w') == intToFile(secondFile)
+				&& secondRank == 3){
+					result.setBegin(spaceArr[secondRank+1][firstFile]);
+					result.setEnPassant(true);
+				}
 			}
 
 			result.setEnd(spaceArr[secondRank][secondFile]);
@@ -171,6 +182,7 @@ public class MoveInterpreter {
 			&& currBoard.getWhiteTurn()){
 				//this executes when white pawn moves two spaces up board
 				result.setBegin(spaceArr[destRank-2][firstFile]);
+				currBoard.setEnPassant('w', intToFile(firstFile));
 
 			}else if(destRank == 4 && spaceArr[destRank+2][firstFile].getPiece()
 			!= null && spaceArr[destRank+2][firstFile].
@@ -179,6 +191,7 @@ public class MoveInterpreter {
 			&& !currBoard.getWhiteTurn()){
 				//this executes when black pawn moves two spaces down board
 				result.setBegin(spaceArr[destRank+2][firstFile]);
+				currBoard.setEnPassant('b',intToFile(firstFile));
 
 			}else{
 				return null;

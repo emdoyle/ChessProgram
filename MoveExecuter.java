@@ -62,6 +62,12 @@ public class MoveExecuter{
 		spaceArr[end.getRank()][end.getFile()].setPiece(attacker);
 		spaceArr[begin.getRank()][begin.getFile()].setPiece(null);
 
+		if(m.isEnPassant() && currBoard.getWhiteTurn()){
+			spaceArr[end.getRank()-1][end.getFile()].setPiece(null);
+		}else if(m.isEnPassant()){
+			spaceArr[end.getRank()+1][end.getFile()].setPiece(null);
+		}
+
 		if(attacker.getSymbol() == 'K'){
 			currBoard.setCastle(currBoard.getTurn(), 'k', false);
 			currBoard.setCastle(currBoard.getTurn(), 'q', false);
@@ -93,6 +99,8 @@ public class MoveExecuter{
 		if(currBoard.detectCheck(invertTeam(currBoard.getTurn()))){
 			System.out.println("Check!");
 		}
+
+		currBoard.setEnPassant(invertTeam(currBoard.getTurn()), 'x');
 		currBoard.setSpacesArray(spaceArr);
 		currBoard.setWhiteTurn(!currBoard.getWhiteTurn());
 	}
@@ -245,11 +253,13 @@ public class MoveExecuter{
 
 		begin.setOccupied(false);
 		attacker = newAttacker;
-		newAttacker.setSpace(end);
+		attacker.setSpace(end);
 		spaceArr[end.getRank()][end.getFile()].setPiece(attacker);
 		spaceArr[begin.getRank()][begin.getFile()].setPiece(null);
-		if(currBoard.detectCheck(currBoard.getTurn()){
-
+		if(currBoard.detectCheck(currBoard.getTurn())){
+			System.out.println("Cannot move into check!");
+			revertMove(begin, end, m.getAttacker(), null);
+			return;
 		}
 
 		if(currBoard.detectCheck(invertTeam(currBoard.getTurn()))){
