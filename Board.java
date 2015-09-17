@@ -28,6 +28,7 @@ public class Board {
 	private boolean blackKCastle = true;
 	private boolean whiteInCheck = false;
 	private boolean blackInCheck = false;
+	private char enPassantFile = 'x'; //x indicates no e.p.
 	private int width, height;
 	
   //constructor creates a board with the specified width and height
@@ -337,6 +338,24 @@ public class Board {
 			blackInCheck = flag;
 		}else{
 			System.out.println("Improperly called setCheck");
+		}
+	}
+
+	public char getEnPassant(char team){
+		if(team == 'w'){
+			return enPassantFileW;
+		}else if(team == 'b'){
+			return enPassantFileB;
+		}else{
+			return 'x';
+		}
+	}
+
+	public void setEnPassant(char team, char file){
+		if(team == 'w'){
+			enPassantFileW = file;
+		}else if(team == 'b'){
+			enPassantFileB = file;
 		}
 	}
 }

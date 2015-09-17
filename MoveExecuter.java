@@ -139,6 +139,10 @@ public class MoveExecuter{
 		spaceArr[end.getRank()][end.getFile()].setPiece(attacker);
 		spaceArr[begin.getRank()][begin.getFile()].setPiece(null);
 
+		if(currBoard.detectCheck(invertTeam(currBoard.getTurn()))){
+			System.out.println("Check!");
+		}
+
 		currBoard.setSpacesArray(spaceArr);
 		currBoard.setWhiteTurn(!currBoard.getWhiteTurn());
 	}
@@ -195,6 +199,13 @@ public class MoveExecuter{
 		newAttacker.setSpace(end);
 		spaceArr[end.getRank()][end.getFile()].setPiece(attacker);
 		spaceArr[begin.getRank()][begin.getFile()].setPiece(null);
+		if(currBoard.detectCheck(currBoard.getTurn()){
+
+		}
+
+		if(currBoard.detectCheck(invertTeam(currBoard.getTurn()))){
+			System.out.println("Check!");
+		}
 
 		currBoard.setSpacesArray(spaceArr);
 		currBoard.setWhiteTurn(!currBoard.getWhiteTurn());
