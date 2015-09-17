@@ -315,7 +315,7 @@ public class Board {
 
 	public boolean detectCheckMate(char team){
 		if(!getCheck(team)){return false;}
-
+		
 		return false;
 	}
 
