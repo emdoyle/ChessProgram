@@ -130,7 +130,6 @@ public class MoveInterpreter {
 				&& secondRank == 5){
 					result.setBegin(spaceArr[secondRank-1][firstFile]);
 					result.setEnPassant(true);
-					System.out.println("registered white en passant");
 				}
 			}else if(!currBoard.getWhiteTurn() &&
 			inRange(secondRank+1) && spaceArr[secondRank+1][firstFile].getPiece()
