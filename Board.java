@@ -27,6 +27,8 @@ public class Board {
 	private boolean blackQCastle = true;
 	private boolean blackKCastle = true;
 	private boolean whiteInCheck = false;
+	private Check whiteCheck = null;
+	private Check blackCheck = null;
 	private boolean blackInCheck = false;
 	//if enPassantW = 'c', then the white c-pawn is vulnerable to en passant
 	private char enPassantFileW = 'x'; //x indicates no e.p.
@@ -200,6 +202,12 @@ public class Board {
 
 	public boolean detectCheck(char team){
 		King currentKing = null;
+		Check resultCheck = new Check();
+		//14 because maximum 7 spaces between king and each checking piece (max 2)
+		Space[] checkSpaces = new Space[14];
+		int checkSpaceIter = 0;
+		boolean addSpaces = false;
+
 		if(team == 'w'){
 			currentKing = whiteKing;
 		}else if(team == 'b'){
@@ -215,14 +223,14 @@ public class Board {
 
 		if(checkPawnSpots(kingRank, kingFile, team)){
 			setCheck(team, true);
-			return true;
+			resultCheck.setNumChecking(1);
 		}
 
 		if(checkKnightSpots(kingRank, kingFile, team)){
 			setCheck(team, true);
-			return true;
+			resultCheck.setNumChecking(resultCheck.getNumChecking()+1);
 		}
-
+		if(resultCheck.getNumChecking() == 0){
 		int currentRank = -1;
 		int currentFile = -1;
 
@@ -234,6 +242,11 @@ public class Board {
 			for(int j = -1; j <=1; j++){
 				currentRank = kingRank;
 				currentFile = kingFile;
+
+				//TRYING TO SOLVE:
+				//Storing checkSpaces while detecting check.
+				//current problem is not being able to retroactively discard spaces
+				//after not finding another piece in that cycle of the loop
 
 				diagonal = Math.abs(i) == 1 && Math.abs(j) == 1;
 				horizOrVert = Math.abs(i) == 1 || Math.abs(j) == 1 && !diagonal;
@@ -253,17 +266,17 @@ public class Board {
 							if(diagonal && checkPiece.getSymbol() == 'B' &&
 								checkPiece.getTeam() != team){
 								setCheck(team, true);
-								return true;
+								resultCheck.setNumChecking(resultCheck.getNumChecking()+1);
 							}
 							if(horizOrVert && checkPiece.getSymbol() == 'R' &&
 								checkPiece.getTeam() != team){
 								setCheck(team, true);
-								return true;
+								resultCheck.setNumChecking(resultCheck.getNumChecking()+1);
 							}
 							if(checkPiece.getSymbol() == 'Q' &&
 								checkPiece.getTeam() != team){
 								setCheck(team, true);
-								return true;
+								resultCheck.setNumChecking(resultCheck.getNumChecking()+1);
 							}
 							blocked = true;
 						}
@@ -271,6 +284,17 @@ public class Board {
 				}
 			}
 		}
+		}
+		if(getCheck(team)){
+			if(team == 'w'){
+				whiteCheck = resultCheck;
+			}else if(team == 'b'){
+				blackCheck = resultCheck;
+			}
+			return true;
+		}
+
+		setCheck(team, false);
 		return false;
 	}
 
