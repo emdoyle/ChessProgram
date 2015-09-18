@@ -29,7 +29,7 @@ public class MoveExecuter{
 		}
 	}
 
-	public void executeMove(Move m){
+	public void executeMove(Move m, boolean printCheckMessages, char team){
 		if(m == null){
 			System.out.println("Move failed");
 			return;
@@ -62,25 +62,25 @@ public class MoveExecuter{
 		spaceArr[end.getRank()][end.getFile()].setPiece(attacker);
 		spaceArr[begin.getRank()][begin.getFile()].setPiece(null);
 
-		if(m.isEnPassant() && currBoard.getWhiteTurn()){
+		if(m.isEnPassant() && team == 'w'){
 			spaceArr[end.getRank()-1][end.getFile()].setPiece(null);
 		}else if(m.isEnPassant()){
 			spaceArr[end.getRank()+1][end.getFile()].setPiece(null);
 		}
 
 		if(attacker.getSymbol() == 'K'){
-			currBoard.setCastle(currBoard.getTurn(), 'k', false);
-			currBoard.setCastle(currBoard.getTurn(), 'q', false);
+			currBoard.setCastle(team, 'k', false);
+			currBoard.setCastle(team, 'q', false);
 		}
 
 		if(attacker.getSymbol() == 'R'){
-			if(currBoard.getTurn() == 'w' && begin.getRank() == 0){
+			if(team == 'w' && begin.getRank() == 0){
 				if(begin.getFile() == 0){
 					currBoard.setCastle('w', 'q', false);
 				}else if(begin.getFile() == 7){
 					currBoard.setCastle('w', 'k', false);
 				}
-			}else if(currBoard.getTurn() == 'b' && begin.getRank() == 7){
+			}else if(team == 'b' && begin.getRank() == 7){
 				if(begin.getFile() == 0){
 					currBoard.setCastle('b', 'q', false);
 				}else if(begin.getFile() == 7){
@@ -89,20 +89,35 @@ public class MoveExecuter{
 			}
 		}
 
-		if(currBoard.detectCheck(currBoard.getTurn())){
-			System.out.println("Cannot move into check.");
-			
+		if(currBoard.detectCheck(team)){
+			if(printCheckMessages){
+				System.out.println("Cannot move into check.");
+			}else{
+				revertMove(begin, end, attacker, victim);
+				throw new IllegalStateException();
+			}
 			revertMove(begin, end, attacker, victim);
 			return;
 		}
 
-		if(currBoard.detectCheck(invertTeam(currBoard.getTurn()))){
-			System.out.println("Check!");
+		if(currBoard.detectCheck(invertTeam(team))){
+			if(printCheckMessages){
+				if(currBoard.detectCheckMate(invertTeam(team))){
+					System.out.println("Checkmate!");
+					currBoard.setCheckMate(true);
+					return;
+				}else{
+					System.out.println("Check!");
+				}
+			}
 		}
-
-		currBoard.setEnPassant(invertTeam(currBoard.getTurn()), 'x');
+		if(!printCheckMessages){
+			revertMove(begin, end, attacker, victim);
+		}else{
+		currBoard.setEnPassant(invertTeam(team), 'x');
 		currBoard.setSpacesArray(spaceArr);
-		currBoard.setWhiteTurn(!currBoard.getWhiteTurn());
+		currBoard.setWhiteTurn(!(team == 'w'));
+		}
 	}
 
 	public void revertMove(Space begin, Space end, Piece attacker, Piece victim){

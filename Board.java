@@ -3,11 +3,10 @@
  * Does not extend or implement anything
  *
  */
-public class Board {
+import java.util.ArrayList;
+import java.util.Scanner;
 
-/*
- * TODO: Add check-detection
- */
+public class Board {
 	
 	private static final int A_FILE=0;
 	private static final int B_FILE=1;
@@ -34,6 +33,7 @@ public class Board {
 	private char enPassantFileW = 'x'; //x indicates no e.p.
 	private char enPassantFileB = 'x';
 	private int width, height;
+	private boolean checkMate = false;
 	
   //constructor creates a board with the specified width and height
   //in current implementation, chess can only be played in 8x8
@@ -203,10 +203,7 @@ public class Board {
 	public boolean detectCheck(char team){
 		King currentKing = null;
 		Check resultCheck = new Check();
-		//14 because maximum 7 spaces between king and each checking piece (max 2)
-		Space[] checkSpaces = new Space[14];
-		int checkSpaceIter = 0;
-		boolean addSpaces = false;
+		
 
 		if(team == 'w'){
 			currentKing = whiteKing;
@@ -238,15 +235,12 @@ public class Board {
 		boolean horizOrVert = false;
 		boolean blocked = false;
 
+		int currNumChecking = 0;
+
 		for(int i = -1; i <= 1; i++){
 			for(int j = -1; j <=1; j++){
 				currentRank = kingRank;
 				currentFile = kingFile;
-
-				//TRYING TO SOLVE:
-				//Storing checkSpaces while detecting check.
-				//current problem is not being able to retroactively discard spaces
-				//after not finding another piece in that cycle of the loop
 
 				diagonal = Math.abs(i) == 1 && Math.abs(j) == 1;
 				horizOrVert = Math.abs(i) == 1 || Math.abs(j) == 1 && !diagonal;
@@ -261,22 +255,31 @@ public class Board {
 						Space checkSpace = spaces[currentRank][currentFile];
 						Piece checkPiece = null;
 
+						currNumChecking = resultCheck.getNumChecking();
+
 						if(checkSpace.getPiece() != null){
 							checkPiece = checkSpace.getPiece();
+							
 							if(diagonal && checkPiece.getSymbol() == 'B' &&
 								checkPiece.getTeam() != team){
 								setCheck(team, true);
-								resultCheck.setNumChecking(resultCheck.getNumChecking()+1);
+								resultCheck.setNumChecking(currNumChecking+1);
+								currNumChecking++;
+								resultCheck.setCheckPiece(currNumChecking, checkPiece);
 							}
 							if(horizOrVert && checkPiece.getSymbol() == 'R' &&
 								checkPiece.getTeam() != team){
 								setCheck(team, true);
-								resultCheck.setNumChecking(resultCheck.getNumChecking()+1);
+								resultCheck.setNumChecking(currNumChecking+1);
+								currNumChecking++;
+								resultCheck.setCheckPiece(currNumChecking, checkPiece);
 							}
 							if(checkPiece.getSymbol() == 'Q' &&
 								checkPiece.getTeam() != team){
 								setCheck(team, true);
-								resultCheck.setNumChecking(resultCheck.getNumChecking()+1);
+								resultCheck.setNumChecking(currNumChecking+1);
+								currNumChecking++;
+								resultCheck.setCheckPiece(currNumChecking, checkPiece);
 							}
 							blocked = true;
 						}
@@ -285,7 +288,10 @@ public class Board {
 			}
 		}
 		}
-		if(getCheck(team)){
+
+		resultCheck = addCheckSpacesTo(resultCheck, team);
+
+		if(resultCheck.getNumChecking() >= 1){
 			if(team == 'w'){
 				whiteCheck = resultCheck;
 			}else if(team == 'b'){
@@ -296,6 +302,74 @@ public class Board {
 
 		setCheck(team, false);
 		return false;
+	}
+
+	private Check addCheckSpacesTo(Check result, char team){
+		Piece piece1 = result.getCheckPiece(1);
+		Piece piece2 = result.getCheckPiece(2);
+
+		ArrayList<Space> checkSpaces = new ArrayList<Space>();
+
+		if(piece1 == null && piece2 == null){
+			return result;
+		}
+		Piece currPiece;
+		for(int i = 0; i < 2; i++){
+			if(i == 0){currPiece = piece1;}else{currPiece = piece2;}
+			if(currPiece != null){
+				if(team == 'w'){
+					checkSpaces.addAll(spacesBetween(currPiece, whiteKing));
+				}else{
+					checkSpaces.addAll(spacesBetween(currPiece, blackKing));
+				}
+			}
+		}
+
+		result.setCheckSpaces(checkSpaces);
+		return result;
+	}
+
+	private ArrayList<Space> spacesBetween(Piece piece1, Piece piece2){
+		ArrayList<Space> checkSpaces = new ArrayList<Space>();	
+
+		Space p1Space = piece1.getSpace();
+		int p1Rank = p1Space.getRank();
+		int p1File = p1Space.getFile();
+
+		Space p2Space = piece2.getSpace();
+		int p2Rank = p2Space.getRank();
+		int p2File = p2Space.getFile();
+
+	//directions are in terms of p1 -> p2
+	//horizDir = 1 means right, horizDir = -1 means left, 0 means no motion horiz
+	//vertDir = 1 means up, vertDir = -1 means down, 0 means no motion vert
+		int horizDir = 0;
+		int vertDir = 0;
+
+		if(p1File < p2File){
+			horizDir = 1;
+		}else{
+			horizDir = -1;
+		}
+
+		if(p1Rank < p2Rank){
+			vertDir = 1;
+		}else{
+			vertDir = -1;
+		}
+
+		int currRank = p1Rank;
+		int currFile = p1File;
+		int length = Math.max(Math.abs(p1Rank-p2Rank),Math.abs(p1File-p2File));
+		for(int i = 0; i < length-1; i++){
+
+			checkSpaces.add(spaces[currRank][currFile]);
+			currRank+=vertDir;
+			currFile+=horizDir;
+
+		}
+
+		return checkSpaces;
 	}
 
 	private boolean checkPawnSpots(int kingRank, int kingFile, char team){
@@ -341,9 +415,161 @@ public class Board {
 	}
 
 	public boolean detectCheckMate(char team){
-		if(!getCheck(team)){return false;}
-		
+		if(!detectCheck(team)){return false;}
+		Check check = new Check();
+		if(team == 'w'){
+			check = whiteCheck;
+		}else if(team == 'b'){
+			check = blackCheck;
+		}else{
+			return false;
+		}
+
+		ArrayList<Space> spaces = check.getCheckSpaces();
+		if(checkKingMoves(team)){
+			return false;
+		}
+		for(Space space : spaces){
+			if(reachable(team, space)){
+				System.out.println("Space: " + space.getRank() + "," + space.getFile());
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private boolean checkKingMoves(char team){
+		King currKing = new King('w');
+		Move attemptMove = new Move();
+		if(team == 'w'){
+			currKing = whiteKing;
+		}else if(team == 'b'){
+			currKing = blackKing;
+		}
+
+		attemptMove.setBegin(currKing.getSpace());
+		Space kingSpace = currKing.getSpace();
+		Space attemptSpace;
+
+		for(int i = -1; i <= 1; i++){
+			for(int j = -1; j <= 1; j++){
+				if(!(i == 0 && j == 0) && inRange(kingSpace.getRank()+i) &&
+				inRange(kingSpace.getFile()+j)){
+					attemptSpace = spaces[kingSpace.getRank()+i][kingSpace.getFile()+j];
+					if(attemptSpace.getPiece() == null ||
+					attemptSpace.getPiece().getTeam() != team){
+						attemptMove.setEnd(attemptSpace);
+						if(isValidMove(attemptMove, team)){return true;}
+					}
+				}
+			}
+		}
 		return false;
+	}
+
+	private boolean isValidMove(Move attemptMove, char team){
+		//checks if move is into check or not
+		MoveExecuter tempExec =new MoveExecuter(this, new Scanner(System.in));
+		boolean invalidMove = false;
+		try{
+			tempExec.executeMove(attemptMove, false, team);
+		}catch(IllegalStateException e){
+			invalidMove = true;
+		}
+		return !invalidMove;
+	}
+
+	private boolean reachable(char team, Space space){
+
+		Move attemptMove = new Move();
+		attemptMove.setEnd(space);
+		int currentRank = -1;
+		int currentFile = -1;
+
+		boolean diagonal = false;
+		boolean horizOrVert = false;
+		boolean blocked = false;
+		boolean invalidMove = false;
+
+		Space pawnSpot = new Space(0,0);
+		if(team == 'w' && space.getRank() > 0){
+			pawnSpot = spaces[space.getRank()-1][space.getFile()];
+		}else if(team == 'b' && space.getFile() < 7){
+			pawnSpot = spaces[space.getRank()+1][space.getFile()];
+		}
+
+		attemptMove.setBegin(pawnSpot);
+		if(isValidMove(attemptMove, team)){return true;}
+
+		Space knightSpot;
+		for(int i = -2; i <= 2; i++){
+			for(int j = -2; j <= 2; j++){
+				if(i != 0 && j != 0
+				&& !((Math.abs(i) == 1)
+				&& (Math.abs(j) == 1))
+				&& !(i%2 == 0 && j%2 == 0)
+				&& space.getFile() >= j*-1 && space.getFile() <= 7-j
+				&& space.getRank() >= i*-1 && space.getRank() <= 7-i){
+					if(spaces[space.getRank()+i][space.getFile()+j].getPiece() != null &&
+					spaces[space.getRank()+i][space.getFile()+j].getPiece().getTeam()
+					!= team &&
+					spaces[space.getRank()+i][space.getFile()+j].getPiece().getSymbol()
+					== 'N'){
+						knightSpot = spaces[space.getRank()+i][space.getFile()+j];
+						attemptMove.setBegin(knightSpot);
+						if(isValidMove(attemptMove, team)){return true;}
+					}
+				}
+			}
+		}
+
+
+		for(int i = -1; i <= 1; i++){
+			for(int j = -1; j <=1; j++){
+				currentRank = space.getRank();
+				currentFile = space.getFile();
+
+				diagonal = Math.abs(i) == 1 && Math.abs(j) == 1;
+				horizOrVert = Math.abs(i) == 1 || Math.abs(j) == 1 && !diagonal;
+
+				blocked = false;
+
+				if(!(i == 0 && j == 0)){
+					while(!blocked && inRange(currentRank+i) && inRange(currentFile+j)){
+						currentRank += i;
+						currentFile += j;
+
+						Space checkSpace = spaces[currentRank][currentFile];
+						Piece checkPiece = null;
+
+						if(checkSpace.getPiece() != null){
+							checkPiece = checkSpace.getPiece();
+							
+							if(diagonal && checkPiece.getSymbol() == 'B' &&
+								checkPiece.getTeam() != team){
+								attemptMove.setBegin(checkSpace);
+								if(isValidMove(attemptMove, team)){return true;}
+							}
+							if(horizOrVert && checkPiece.getSymbol() == 'R' &&
+								checkPiece.getTeam() != team){
+								attemptMove.setBegin(checkSpace);
+								if(isValidMove(attemptMove, team)){return true;}
+							}
+							if(checkPiece.getSymbol() == 'Q' &&
+								checkPiece.getTeam() != team){
+								attemptMove.setBegin(checkSpace);
+								if(isValidMove(attemptMove, team)){return true;}
+							}
+							blocked = true;
+						}
+					}
+				}
+			}
+		}
+
+	return false;
+
 	}
 
 	public boolean getCheck(char team){
@@ -383,5 +609,13 @@ public class Board {
 		}else if(team == 'b'){
 			enPassantFileB = file;
 		}
+	}
+
+	public boolean getCheckMate(){
+		return checkMate;
+	}
+
+	public void setCheckMate(boolean flag){
+		checkMate = flag;
 	}
 }
