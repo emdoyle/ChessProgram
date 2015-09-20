@@ -30,7 +30,7 @@ public class MoveExecuter{
 	}
 
 	public void executeMove(Move m, boolean printCheckMessages, char team){
-		if(m == null){
+		if(m == null && printCheckMessages){
 			System.out.println("Move failed");
 			return;
 		}
@@ -48,7 +48,7 @@ public class MoveExecuter{
 		if(m.getAttacker() == null
 		|| m.getBegin() == null || m.getEnd()
 		== null){
-			System.out.println("Move failed");
+			if(printCheckMessages){System.out.println("Move failed");}
 			return;
 		}
 

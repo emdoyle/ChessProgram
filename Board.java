@@ -429,11 +429,12 @@ public class Board {
 		if(checkKingMoves(team)){
 			return false;
 		}
+		if(spaces != null){
 		for(Space space : spaces){
 			if(reachable(team, space)){
-				System.out.println("Space: " + space.getRank() + "," + space.getFile());
 				return false;
 			}
+		}
 		}
 
 		return true;
