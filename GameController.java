@@ -8,7 +8,7 @@ public class GameController {
 		clearConsole();	
 		System.out.println("Chess program has started, about to display board\n");
 		Board currentBoard = new Board(8, 8);
-		currentBoard.displayBoard();
+		ChessView view = new ChessView(currentBoard);
 		Space[][] spaceArr = currentBoard.getSpacesArray();
 		String selectedMove;
 		Move currMove;
@@ -20,7 +20,8 @@ public class GameController {
 			clearConsole();
 			currMove = interp.parseMove(selectedMove);
 			exec.executeMove(currMove, true, currentBoard.getTurn());
-			currentBoard.displayBoard();
+			//currentBoard.displayBoard();
+			view.repaint();
 			if(currentBoard.getCheckMate()){
 				System.out.println("Winner: " + currentBoard.getTurn());
 				System.out.println("Enter anything to end.");

@@ -1,16 +1,11 @@
 public class MoveInterpreter {
 
-	/*
-	* NEED TO FIX/DO
-	* -LONG-TERM: Detecting check(mate)
-	*/
-
 	private Board currBoard;
 	private Space[][] spaceArr;
 
 	public MoveInterpreter(Board b){
 		currBoard = b;
-		spaceArr = b.getSpacesArray();	
+		spaceArr = b.getSpacesArray();
 	}
 
 	public Move parseMove(String line){
@@ -140,7 +135,7 @@ public class MoveInterpreter {
 				spaceArr[secondRank][secondFile].getPiece().getTeam() == 'w'){ 
 					result.setBegin(spaceArr[secondRank+1][firstFile]);
 				}else if(currBoard.getEnPassant('w') == intToFile(secondFile)
-				&& secondRank == 3){
+				&& secondRank == 2){
 					result.setBegin(spaceArr[secondRank+1][firstFile]);
 					result.setEnPassant(true);
 				}

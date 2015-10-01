@@ -64,8 +64,10 @@ public class MoveExecuter{
 
 		if(m.isEnPassant() && team == 'w'){
 			spaceArr[end.getRank()-1][end.getFile()].setPiece(null);
+			System.out.println("En Passant!");
 		}else if(m.isEnPassant()){
 			spaceArr[end.getRank()+1][end.getFile()].setPiece(null);
+			System.out.println("En Passant!");
 		}
 
 		if(attacker.getSymbol() == 'K'){
