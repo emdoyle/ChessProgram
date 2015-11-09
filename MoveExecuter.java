@@ -29,27 +29,25 @@ public class MoveExecuter{
 		}
 	}
 
-	public void executeMove(Move m, boolean printCheckMessages, char team){
+	public int executeMove(Move m, boolean printCheckMessages, char team){
 		if(m == null && printCheckMessages){
 			System.out.println("Move failed");
-			return;
+			return -1;
 		}
 
 		if(m.getCastle()){
-			executeCastle(m);
-			return;
+			return executeCastle(m);
 		}
 
 		if(m.isPromotion()){
-			executePromotion(m);
-			return;
+			return executePromotion(m);
 		}
 
 		if(m.getAttacker() == null
 		|| m.getBegin() == null || m.getEnd()
 		== null){
 			if(printCheckMessages){System.out.println("Move failed");}
-			return;
+			return -1;
 		}
 
 		Piece attacker = m.getAttacker();
@@ -99,7 +97,7 @@ public class MoveExecuter{
 				throw new IllegalStateException();
 			}
 			revertMove(begin, end, attacker, victim);
-			return;
+			return -1;
 		}
 
 		if(currBoard.detectCheck(invertTeam(team))){
@@ -107,7 +105,7 @@ public class MoveExecuter{
 				if(currBoard.detectCheckMate(invertTeam(team))){
 					System.out.println("Checkmate!");
 					currBoard.setCheckMate(true);
-					return;
+					return 1;
 				}else{
 					System.out.println("Check!");
 				}
@@ -115,10 +113,12 @@ public class MoveExecuter{
 		}
 		if(!printCheckMessages){
 			revertMove(begin, end, attacker, victim);
+      return 0;
 		}else{
 		currBoard.setEnPassant(invertTeam(team), 'x');
 		currBoard.setSpacesArray(spaceArr);
 		currBoard.setWhiteTurn(!(team == 'w'));
+    return 1;
 		}
 	}
 
@@ -133,15 +133,15 @@ public class MoveExecuter{
 		currBoard.setSpacesArray(spaceArr);
 	}
 
-	public void executeCastle(Move m){
+	public int executeCastle(Move m){
 		if(m.getAttacker() == null || m.getVictim() == null){
 			System.out.println("Move failed");
-			return;
+			return -1;
 		}
 
 		if(currBoard.detectCheck(currBoard.getTurn())){
 			System.out.println("Cannot castle while in check.");
-			return;
+			return -1;
 		}
 
 		Piece attacker = m.getAttacker();
@@ -161,19 +161,19 @@ public class MoveExecuter{
 			file = 0;
 			if(!checkSpotsBetween(begin, spaceArr[rank][1], -1, attacker)){
 				System.out.println("Cannot castle through or into check.");
-				return;
+				return -1;
 			}
 			end = spaceArr[rank][1];
 		}else if(m.getVictim().getSpace().getFile() == 7){
 			file = 7;
 			if(!checkSpotsBetween(begin, spaceArr[rank][6], 1, attacker)){
 				System.out.println("Cannot castle through or into check.");
-				return;
+				return -1;
 			}
 			end = spaceArr[rank][6];
 		}else{
 			System.out.println("Move failed");
-			return;
+			return -1;
 		}
 
 		begin.setOccupied(false);
@@ -201,6 +201,7 @@ public class MoveExecuter{
 
 		currBoard.setSpacesArray(spaceArr);
 		currBoard.setWhiteTurn(!currBoard.getWhiteTurn());
+    return 1;
 	}
 
 	private boolean checkSpotsBetween(Space begin, Space end, int direction,
@@ -221,12 +222,12 @@ public class MoveExecuter{
 		return true;
 	}
 
-	public void executePromotion(Move m){
+	public int executePromotion(Move m){
 		if(m == null || m.getAttacker() == null
 		|| m.getBegin() == null || m.getEnd()
 		== null){
 			System.out.println("Move failed");
-			return;
+			return -1;
 		}
 
 		Piece attacker = m.getAttacker();
@@ -265,7 +266,7 @@ public class MoveExecuter{
 
 		if(newAttacker == null){
 			System.out.println("Please type 'quit' once more");
-			return;
+			return 0;
 		}
 
 		begin.setOccupied(false);
@@ -276,7 +277,7 @@ public class MoveExecuter{
 		if(currBoard.detectCheck(currBoard.getTurn())){
 			System.out.println("Cannot move into check!");
 			revertMove(begin, end, m.getAttacker(), null);
-			return;
+			return -1;
 		}
 
 		if(currBoard.detectCheck(invertTeam(currBoard.getTurn()))){
@@ -285,6 +286,7 @@ public class MoveExecuter{
 
 		currBoard.setSpacesArray(spaceArr);
 		currBoard.setWhiteTurn(!currBoard.getWhiteTurn());
+    return 1;
 	}
 
 }

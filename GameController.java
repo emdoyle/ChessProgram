@@ -14,12 +14,16 @@ public class GameController {
 		Move currMove;
 		MoveInterpreter interp = new MoveInterpreter(currentBoard);
 		MoveExecuter exec = new MoveExecuter(currentBoard, input);
+    MoveRecorder mrec = new MoveRecorder();
 		System.out.println("Type a move code or type 'quit' to quit.");
 		selectedMove = input.nextLine();
 		while(!selectedMove.equals("quit") && !end){
 			clearConsole();
+      System.out.println(mrec.getMoveString());
 			currMove = interp.parseMove(selectedMove);
-			exec.executeMove(currMove, true, currentBoard.getTurn());
+			if(exec.executeMove(currMove, true, currentBoard.getTurn())==1){
+        mrec.recordMove(selectedMove);
+      }
 			//currentBoard.displayBoard();
 			view.repaint();
 			if(currentBoard.getCheckMate()){
@@ -29,7 +33,9 @@ public class GameController {
 			}
 			selectedMove = input.nextLine();
 		}
+    
 		clearConsole();
+    System.exit(0);
 	}
 
 	private final static void clearConsole(){
