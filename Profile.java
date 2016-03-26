@@ -32,4 +32,8 @@ public class Profile{
     return gameStrings.get(index);
   }
 
+  public ArrayList<String> getGameList(){
+    return gameStrings;
+  }
+
 };

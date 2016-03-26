@@ -16,7 +16,7 @@ public class GameController {
 		MoveInterpreter interp = new MoveInterpreter(currentBoard);
 		MoveExecuter exec = new MoveExecuter(currentBoard, input);
     		MoveRecorder mrec = new MoveRecorder(currentBoard);
-		ProfileHolder phold = new ProfileHolder();
+		ProfileHolder phold = new ProfileHolder("Profiles.txt");
 
 		System.out.println("Enter your profile name, or if you have not created a profile,"
 		+ "\nenter a name for a new profile:");
@@ -46,6 +46,7 @@ public class GameController {
 			selectedMove = input.nextLine();
 		}
 		currProf.addGame(mrec.getMoveString());
+		phold.writeProfiles();
 		clearConsole();
 		System.out.println(currProf.getGameAt(0));
     

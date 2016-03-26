@@ -31,9 +31,9 @@ public class MoveRecorder{
     if(currBoard.getTurn() == 'b'){
       numMoves++;
       currentGame += numMoves + ". ";
-      currentGame += s + ", ";
+      currentGame += s;
     }else{
-      currentGame += s + " ";
+      currentGame += ", " + s + " ";
     }
   }
 
