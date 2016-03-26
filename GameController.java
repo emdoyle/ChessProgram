@@ -7,6 +7,7 @@ public class GameController {
 		boolean end = false;
 		clearConsole();	
 		System.out.println("Chess program has started, about to display board\n");
+
 		Board currentBoard = new Board(8, 8);
 		ChessView view = new ChessView(currentBoard);
 		Space[][] spaceArr = currentBoard.getSpacesArray();
@@ -14,16 +15,19 @@ public class GameController {
 		Move currMove;
 		MoveInterpreter interp = new MoveInterpreter(currentBoard);
 		MoveExecuter exec = new MoveExecuter(currentBoard, input);
-    MoveRecorder mrec = new MoveRecorder();
+    		MoveRecorder mrec = new MoveRecorder(currentBoard);
+
 		System.out.println("Type a move code or type 'quit' to quit.");
 		selectedMove = input.nextLine();
+
 		while(!selectedMove.equals("quit") && !end){
 			clearConsole();
-      System.out.println(mrec.getMoveString());
+      			//System.out.println(mrec.getMoveString());
 			currMove = interp.parseMove(selectedMove);
 			if(exec.executeMove(currMove, true, currentBoard.getTurn())==1){
-        mrec.recordMove(selectedMove);
-      }
+        			mrec.recordMove(selectedMove);
+      			}
+			System.out.println(mrec.getMoveString());
 			//currentBoard.displayBoard();
 			view.repaint();
 			if(currentBoard.getCheckMate()){
@@ -35,7 +39,7 @@ public class GameController {
 		}
     
 		clearConsole();
-    System.exit(0);
+    		System.exit(0);
 	}
 
 	private final static void clearConsole(){

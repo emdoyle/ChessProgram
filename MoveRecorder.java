@@ -4,9 +4,10 @@ public class MoveRecorder{
 
   private String currentGame = "";
   private int numMoves = 0;
+  private Board currBoard;
 
-  public MoveRecorder(){
-    //empty no-arg constructor
+  public MoveRecorder(Board b){
+    this.currBoard = b;
   }
 
   //if for some reason need to specify ivars
@@ -20,14 +21,20 @@ public class MoveRecorder{
     //I think since it's a String and int, no references to worry about
     this.currentGame = mr.currentGame;
     this.numMoves = mr.numMoves;
+    //eventually should implement a deep copy of the Board
   }
 
 
   //records the move internally in currentGame string
-	public void recordMove(String s){
-    numMoves++;
-    currentGame += numMoves + ". ";
-    currentGame += s + ", ";
+  public void recordMove(String s){
+    //recorded AFTER the move
+    if(currBoard.getTurn() == 'b'){
+      numMoves++;
+      currentGame += numMoves + ". ";
+      currentGame += s + ", ";
+    }else{
+      currentGame += s + " ";
+    }
   }
 
   public String getMoveString(){

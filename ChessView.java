@@ -21,9 +21,11 @@ public class ChessView extends JPanel{
 
 		try{
 			chessBackground = ImageIO.read(new File("empty_board.jpg"));
-		}catch(Exception e){}
+		}catch(Exception e){
+			System.out.println("Could not load board image.");
+		}
 		board = currBoard;
-    repaint();
+    		repaint();
 	}
 
 	public void paintComponent(Graphics g){
@@ -36,7 +38,7 @@ public class ChessView extends JPanel{
 
 		Space cur = null;
 		if(board != null && board.getSpacesArray() != null){
-    Space[][] arr = board.getSpacesArray();
+    		Space[][] arr = board.getSpacesArray();
 
 		for(int i = 0; i < 8; i++){
 			for(int j = 0; j < 8; j++){
