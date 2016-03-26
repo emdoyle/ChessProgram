@@ -16,7 +16,15 @@ public class GameController {
 		MoveInterpreter interp = new MoveInterpreter(currentBoard);
 		MoveExecuter exec = new MoveExecuter(currentBoard, input);
     		MoveRecorder mrec = new MoveRecorder(currentBoard);
+		ProfileHolder phold = new ProfileHolder();
 
+		System.out.println("Enter your profile name, or if you have not created a profile,"
+		+ "\nenter a name for a new profile:");
+		String profName = input.nextLine();
+		Profile currProf;
+		if(!phold.contains(profName)){currProf = phold.createProf(profName);}
+		else{currProf = phold.getProf(profName);}
+		
 		System.out.println("Type a move code or type 'quit' to quit.");
 		selectedMove = input.nextLine();
 
@@ -37,8 +45,11 @@ public class GameController {
 			}
 			selectedMove = input.nextLine();
 		}
-    
+		currProf.addGame(mrec.getMoveString());
 		clearConsole();
+		System.out.println(currProf.getGameAt(0));
+    
+		//clearConsole();
     		System.exit(0);
 	}
 
